@@ -1,1 +1,48 @@
+# === Maven ===
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+
+# === Gradle (if used accidentally) ===
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# === IntelliJ IDEA ===
+*.iml
+.idea/
+out/
+
+# === VS Code ===
+.vscode/
+
+# === Logs and temp ===
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# === OS files ===
+.DS_Store
+Thumbs.db
+
+# === Eclipse ===
+.project
+.classpath
+.settings/
+
+# === Java ===
+*.class
+*.jar
+*.war
+*.ear
+
+# === Environment files ===
+.env
+.env.local
+*.properties.local
+application-dev.properties
+application-test.properties
+application-prod.properties
 
