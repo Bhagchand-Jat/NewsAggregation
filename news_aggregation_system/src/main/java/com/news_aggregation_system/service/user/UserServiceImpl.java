@@ -4,6 +4,7 @@ import com.news_aggregation_system.dto.UserDTO;
 import com.news_aggregation_system.exception.AlreadyExistsException;
 import com.news_aggregation_system.exception.NotFoundException;
 import com.news_aggregation_system.mapper.UserMapper;
+import com.news_aggregation_system.model.NotificationConfig;
 import com.news_aggregation_system.model.Role;
 import com.news_aggregation_system.model.User;
 import com.news_aggregation_system.repository.RoleRepository;
@@ -11,9 +12,10 @@ import com.news_aggregation_system.repository.UserRepository;
 import com.news_aggregation_system.service.common.Constant;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
+@Transactional
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -37,6 +39,9 @@ public class UserServiceImpl implements UserService {
         Role role = getRoleByRoleNameOrThrow(Constant.USER_ROLE);
         userDTO.setRole(role);
         User user = UserMapper.toEntity(userDTO);
+        NotificationConfig config = new NotificationConfig();
+        config.setUser(user);
+        user.setNotificationConfig(config);
         User savedUser = userRepository.save(user);
 
         return UserMapper.toDto(savedUser);

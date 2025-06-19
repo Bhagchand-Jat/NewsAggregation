@@ -35,6 +35,8 @@ public class Article {
     @Column(updatable = false)
     private Date publishedAt;
 
+    private boolean enabled=true;
+
     @Formula("(SELECT COUNT(*) FROM article_reactions ar WHERE ar.article_id = article_id AND ar.reaction_type = 'LIKE')")
     private int likeCount;
 
@@ -113,6 +115,14 @@ public class Article {
 
     public void setPublishedAt(Date publishedAt) {
         this.publishedAt = publishedAt;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public int getLikeCount() {

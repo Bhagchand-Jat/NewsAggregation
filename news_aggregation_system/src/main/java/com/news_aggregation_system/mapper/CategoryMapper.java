@@ -10,6 +10,7 @@ public class CategoryMapper {
         CategoryDTO dto = new CategoryDTO();
         dto.setCategoryId(category.getCategoryId());
         dto.setName(category.getName());
+        dto.setEnabled(category.isEnabled());
         if (category.getUser() != null) {
             dto.setUserId(category.getUser().getUserId());
         }
@@ -19,7 +20,7 @@ public class CategoryMapper {
     public static Category toEntity(CategoryDTO dto) {
         Category category = new Category();
         category.setName(dto.getName());
-
+        category.setEnabled(dto.isEnabled());
         if (dto.getUserId() != null) {
             User user = new User();
             user.setUserId(dto.getUserId());

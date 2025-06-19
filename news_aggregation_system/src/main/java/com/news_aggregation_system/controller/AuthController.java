@@ -4,6 +4,7 @@ import com.news_aggregation_system.dto.LoginRequest;
 import com.news_aggregation_system.dto.UserDTO;
 import com.news_aggregation_system.response.ApiResponse;
 import com.news_aggregation_system.service.auth.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,5 +25,11 @@ public class AuthController {
     public ResponseEntity<ApiResponse<UserDTO>> login(@RequestBody LoginRequest request) {
 
         return ResponseEntity.ok(ApiResponse.ok("Login successful", authService.login(request)));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<ApiResponse<UserDTO>> signUp(@Valid @RequestBody UserDTO userDTO) {
+
+        return ResponseEntity.ok(ApiResponse.ok("SignUp successful", authService.register(userDTO)));
     }
 }

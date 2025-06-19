@@ -7,11 +7,12 @@ import com.news_aggregation_system.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Transactional
 @Service
 public class ExternalNewsFetcherServiceImpl implements ExternalNewsFetcherService{
     private final Logger logger = LoggerFactory.getLogger(ExternalNewsFetcherServiceImpl.class);

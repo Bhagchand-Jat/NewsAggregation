@@ -12,11 +12,13 @@ import com.news_aggregation_system.repository.NewsSourceRepository;
 import com.news_aggregation_system.service.admin.NewsSourceService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Transactional
 @Service
 public class NewsAggregationServiceImpl implements NewsAggregationService {
 
@@ -84,7 +86,8 @@ public class NewsAggregationServiceImpl implements NewsAggregationService {
     @Override
     public List<ArticleDTO> fetchExternalNews(){
         List<ArticleDTO> result = new ArrayList<>();
-        for (NewsSourceDTO newsSource : newsSourceService.getAll()) {
+        List<NewsSourceDTO> newsSources=newsSourceService.getAllByEnabledAndUpdateLastModified();
+        for (NewsSourceDTO newsSource : newsSources) {
             List<ArticleDTO> articleDTOs = fetcherService
                     .fetchAndConvert(newsSource.getSourceUrl() + newsSource.getSourceApiKey());
             result.addAll(articleDTOs);

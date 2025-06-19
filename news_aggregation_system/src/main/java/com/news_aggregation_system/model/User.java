@@ -26,7 +26,7 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @OneToOne(optional = false)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private NotificationConfig notificationConfig;
     @OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL)
     private Set<Category> categories = new HashSet<>();
@@ -40,13 +40,6 @@ public class User {
     public User() {
     }
 
-    @PostPersist
-    private void createNotificationConfig() {
-        NotificationConfig notificationConfig = new NotificationConfig();
-        notificationConfig.setUser(this);
-
-        this.setNotificationConfig(notificationConfig);
-    }
 
     public Long getUserId() {
         return userId;

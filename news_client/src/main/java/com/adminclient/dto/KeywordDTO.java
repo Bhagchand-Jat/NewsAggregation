@@ -1,21 +1,21 @@
 package com.adminclient.dto;
 
-public class CategoryDTO {
-    private Long categoryId;
+public class KeywordDTO {
+    private Long keywordId;
 
     private String name;
 
     private Long userId;
 
-    public CategoryDTO() {
+    public KeywordDTO() {
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public Long getKeywordId() {
+        return keywordId;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setKeywordId(Long keywordId) {
+        this.keywordId = keywordId;
     }
 
     public String getName() {

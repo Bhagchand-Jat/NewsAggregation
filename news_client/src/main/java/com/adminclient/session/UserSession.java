@@ -3,25 +3,22 @@ package com.adminclient.session;
 import com.adminclient.dto.UserDTO;
 
 public class UserSession {
-    private String email;
-    private String name;
-    private String role;
+    private UserDTO currentUser;
+
 
     public void login(UserDTO user) {
-        this.email = user.getEmail();
-        this.name = user.getName();
-        this.role = user.getRole().getRole();
+        this.currentUser = user;
     }
 
     public void logout() {
-        this.email = null;
-        this.name = null;
-        this.role = null;
+        currentUser = null;
+
     }
 
-    public boolean isLoggedIn() { return email != null; }
-    public boolean isAdmin()     { return role != null && role.contains("ADMIN"); }
+    public boolean isLoggedIn() { return currentUser != null; }
 
-    public String getName() { return name; }
-    public String getRole() { return role; }
+    public boolean isAdmin() { return currentUser != null && "ADMIN".equalsIgnoreCase(currentUser.getRole().getRole()); }
+
+    public UserDTO getUser() { return currentUser; }
+
 }

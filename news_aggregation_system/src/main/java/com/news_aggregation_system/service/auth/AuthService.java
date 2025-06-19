@@ -8,6 +8,8 @@ public interface AuthService {
 
     UserDTO login(LoginRequest request);
 
+    UserDTO register(UserDTO user);
+
     void logout(Long userId);
 
 

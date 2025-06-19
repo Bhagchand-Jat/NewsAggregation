@@ -1,13 +1,17 @@
 package com.adminclient.dto;
 
-public class CategoryDTO {
+public class CategoryStatusDTO {
     private Long categoryId;
-
     private String name;
+    private boolean enabled;
 
-    private Long userId;
+    public CategoryStatusDTO() {
+    }
 
-    public CategoryDTO() {
+    public CategoryStatusDTO(Long id, String name, boolean enabled) {
+        this.categoryId = id;
+        this.name = name;
+        this.enabled = enabled;
     }
 
     public Long getCategoryId() {
@@ -26,13 +30,12 @@ public class CategoryDTO {
         this.name = name;
     }
 
-    public Long getUserId() {
-        return userId;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
-
 
 }

@@ -13,10 +13,12 @@ import com.news_aggregation_system.repository.ArticleRepository;
 import com.news_aggregation_system.repository.SavedArticleRepository;
 import com.news_aggregation_system.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class SavedArticleServiceImpl implements SavedArticleService {
 

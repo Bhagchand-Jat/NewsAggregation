@@ -8,6 +8,9 @@ public class CategoryDTO {
     @NotBlank(message = "Category name is required")
     private String name;
 
+    private boolean enabled = true;
+
+
     private Long userId;
 
     public CategoryDTO() {
@@ -37,5 +40,11 @@ public class CategoryDTO {
         this.userId = userId;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }

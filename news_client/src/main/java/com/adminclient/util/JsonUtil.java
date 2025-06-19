@@ -4,13 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public final class JsonUtil {
 
+public final class JsonUtil {
     private static final ObjectMapper MAPPER = build();
 
-    private JsonUtil() { }  
+    private JsonUtil() { }
 
-    public static ObjectMapper mapper() { return MAPPER; }
+    public static ObjectMapper mapper() {
+        return MAPPER;
+    }
 
     private static ObjectMapper build() {
         ObjectMapper om = new ObjectMapper();
@@ -19,4 +21,3 @@ public final class JsonUtil {
         return om;
     }
 }
-

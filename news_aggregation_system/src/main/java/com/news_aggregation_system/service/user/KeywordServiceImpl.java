@@ -11,7 +11,9 @@ import com.news_aggregation_system.repository.UserRepository;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class KeywordServiceImpl implements KeywordService {
 

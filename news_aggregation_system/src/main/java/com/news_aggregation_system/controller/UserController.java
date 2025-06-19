@@ -1,8 +1,10 @@
 package com.news_aggregation_system.controller;
 
 import com.news_aggregation_system.dto.ArticleDTO;
+import com.news_aggregation_system.dto.CategoryDTO;
 import com.news_aggregation_system.dto.UserDTO;
 import com.news_aggregation_system.response.ApiResponse;
+import com.news_aggregation_system.service.admin.CategoryService;
 import com.news_aggregation_system.service.user.SavedArticleService;
 import com.news_aggregation_system.service.user.UserService;
 import jakarta.validation.Valid;
@@ -17,19 +19,20 @@ public class UserController {
 
     private final UserService userService;
     private final SavedArticleService savedArticleService;
+   private  final CategoryService categoryService;
 
-
-    public UserController(UserService userService, SavedArticleService savedArticleService) {
+    public UserController(UserService userService, SavedArticleService savedArticleService, CategoryService categoryService) {
         this.userService = userService;
         this.savedArticleService = savedArticleService;
+        this.categoryService = categoryService;
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<UserDTO>> registerUser(@Valid @RequestBody UserDTO userDTO) {
-        UserDTO createdUser = userService.create(userDTO);
-        ApiResponse<UserDTO> response = new ApiResponse<>("User registered successfully", true, createdUser);
-        return ResponseEntity.ok(response);
-    }
+//    @PostMapping
+//    public ResponseEntity<ApiResponse<UserDTO>> registerUser(@Valid @RequestBody UserDTO userDTO) {
+//        UserDTO createdUser = userService.create(userDTO);
+//        ApiResponse<UserDTO> response = new ApiResponse<>("User registered successfully", true, createdUser);
+//        return ResponseEntity.ok(response);
+//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<UserDTO>> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
@@ -71,6 +74,10 @@ public class UserController {
             @PathVariable Long articleId) {
         savedArticleService.saveArticle(userId, articleId);
         return ResponseEntity.ok(ApiResponse.ok("Article saved successfully"));
+    }
+
+    public  ResponseEntity<ApiResponse<List<CategoryDTO>>> getAllEnabledCategories() {
+        return ResponseEntity.ok(ApiResponse.ok(categoryService.getEnabledCategories()));
     }
 }
 

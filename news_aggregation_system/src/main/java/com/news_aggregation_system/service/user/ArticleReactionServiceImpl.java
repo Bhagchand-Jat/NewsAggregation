@@ -10,12 +10,14 @@ import com.news_aggregation_system.model.User;
 import com.news_aggregation_system.repository.ArticleReactionRepository;
 import com.news_aggregation_system.repository.ArticleRepository;
 import com.news_aggregation_system.repository.UserRepository;
-import jakarta.transaction.Transactional;
+
 
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class ArticleReactionServiceImpl implements ArticleReactionService {
     private final ArticleReactionRepository reactionRepository;

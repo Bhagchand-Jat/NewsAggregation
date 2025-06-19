@@ -50,9 +50,9 @@ public class AdminController {
     }
 
 
-    @GetMapping("/news-sources")
-    public ResponseEntity<ApiResponse<List<NewsSourceDTO>>> list() {
-        return ResponseEntity.ok(ApiResponse.ok(newsSourceService.getAll()));
+    @PutMapping("/news-sources")
+    public ResponseEntity<ApiResponse<List<NewsSourceDTO>>> newsSources() {
+        return ResponseEntity.ok(ApiResponse.ok(newsSourceService.getAllByEnabledAndUpdateLastModified()));
     }
 
 }

@@ -1,32 +1,25 @@
-package com.news_aggregation_system.dto;
-
-import com.news_aggregation_system.model.Category;
-import jakarta.validation.constraints.NotBlank;
+package com.adminclient.dto;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.adminclient.model.Category;
+
 public class ArticleDTO {
 
     private Long articleId;
 
-    @NotBlank(message = "Title is required")
     private String title;
 
-    @NotBlank(message = "Content is required")
     private String content;
 
-    @NotBlank(message = "Description is required")
     private String description;
 
-    @NotBlank(message = "Source is required")
     private String source;
 
-    @NotBlank(message = "URL is required")
-    private String url;
 
-    private boolean enabled=true;
+    private String url;
 
     private Date publishedAt;
     private Set<Category> categories = new HashSet<>();
@@ -100,11 +93,5 @@ public class ArticleDTO {
         this.categories = categories;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
 }

@@ -11,7 +11,6 @@ public class UserDTO {
 
     private String name;
 
-
     private String password;
 
     private Role role;
@@ -58,6 +57,4 @@ public class UserDTO {
     public void setRole(Role role) {
         this.role = role;
     }
-
-
 }

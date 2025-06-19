@@ -6,10 +6,13 @@ import com.news_aggregation_system.mapper.NewsSourceMapper;
 import com.news_aggregation_system.model.NewsSource;
 import com.news_aggregation_system.repository.NewsSourceRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class NewsSourceServiceImpl implements NewsSourceService {
 
@@ -56,5 +59,25 @@ public class NewsSourceServiceImpl implements NewsSourceService {
     private NewsSource getNewsSourceOrThrow(Long id) {
         return newsSourceRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("NewsSource", "id: " + id));
+    }
+
+    @Override
+    public List<NewsSourceDTO> findAllByEnabled() {
+        return newsSourceRepository.findByEnabledTrue()
+                .stream()
+                .map(NewsSourceMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<NewsSourceDTO> getAllByEnabledAndUpdateLastModified() {
+        List<NewsSource> newsSources = newsSourceRepository.findByEnabledTrue();
+        for (NewsSource newsSource : newsSources) {
+            newsSourceRepository.updateLastAccessed(newsSource.getSourceId(),LocalDateTime.now());
+        }
+        return newsSources
+                .stream()
+                .map(NewsSourceMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

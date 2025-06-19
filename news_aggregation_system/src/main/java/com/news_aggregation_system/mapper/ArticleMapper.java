@@ -17,6 +17,7 @@ public class ArticleMapper {
         dto.setSource(article.getSource());
         dto.setUrl(article.getUrl());
         dto.setDescription(article.getDescription());
+        dto.setEnabled(article.isEnabled());
         dto.setPublishedAt(article.getPublishedAt());
 
         if (article.getCategories() != null) {
@@ -34,7 +35,7 @@ public class ArticleMapper {
         article.setUrl(dto.getUrl());
         article.setDescription(dto.getDescription()!=null?dto.getDescription():"No description available");
         article.setPublishedAt(dto.getPublishedAt());
-
+        article.setEnabled(dto.isEnabled());
         if (dto.getCategories() != null) {
             article.setCategories(dto.getCategories());
         }

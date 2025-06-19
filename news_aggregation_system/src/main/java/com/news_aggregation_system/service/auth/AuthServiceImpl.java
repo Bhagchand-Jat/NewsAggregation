@@ -1,27 +1,33 @@
 package com.news_aggregation_system.service.auth;
 
 import com.news_aggregation_system.dto.LoginRequest;
-import com.news_aggregation_system.dto.LoginResponse;
 import com.news_aggregation_system.dto.UserDTO;
 import com.news_aggregation_system.exception.LoginFailedException;
 import com.news_aggregation_system.mapper.UserMapper;
 import com.news_aggregation_system.model.User;
 import com.news_aggregation_system.repository.UserRepository;
+import com.news_aggregation_system.service.user.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Transactional
 @Service
 public class AuthServiceImpl implements AuthService {
 
+
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private  final UserService userService;
 
 
-    public AuthServiceImpl(UserRepository userRepository) {
+    public AuthServiceImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, UserService userService) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder();
+        this.userService = userService;
     }
 
     @Override
@@ -35,6 +41,11 @@ public class AuthServiceImpl implements AuthService {
         return  UserMapper.toDto(user.get());
 
 
+    }
+
+    @Override
+    public UserDTO register(UserDTO user) {
+        return userService.create(user);
     }
 
     @Override

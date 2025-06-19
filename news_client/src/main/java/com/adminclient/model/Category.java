@@ -1,13 +1,13 @@
-package com.adminclient.dto;
+package com.adminclient.model;
 
-public class CategoryDTO {
+public class Category {
+
+
     private Long categoryId;
 
     private String name;
 
-    private Long userId;
-
-    public CategoryDTO() {
+    public Category() {
     }
 
     public Long getCategoryId() {
@@ -26,13 +26,6 @@ public class CategoryDTO {
         this.name = name;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
 
 }
+

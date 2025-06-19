@@ -57,9 +57,6 @@ public class CategoryServiceImpl implements CategoryService {
             categories.add(category);
         }
         return categories;
-//        return names.stream()
-//                .map(this::getOrCreateCategory)
-//                .collect(Collectors.toSet());
     }
 
     @Override
@@ -89,6 +86,12 @@ public class CategoryServiceImpl implements CategoryService {
     Category category=   categoryRepository.findByNameIgnoreCase(name)
        .orElseThrow(()-> new NotFoundException("Category", "name: " + name));
        return CategoryMapper.toDto(category);
+    }
+
+    @Override
+    public List<CategoryDTO> getEnabledCategories() {
+        return categoryRepository.findByEnabledTrue().stream().map(CategoryMapper::toDto)
+                .toList();
     }
 
 
