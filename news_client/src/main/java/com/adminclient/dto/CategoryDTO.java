@@ -6,6 +6,35 @@ public class CategoryDTO {
     private String name;
 
     private Long userId;
+    private boolean enabled ;
+
+    
+
+    public CategoryDTO(String name, Long userId) {
+        this.name = name;
+        this.userId = userId;
+    }
+
+    
+
+    
+
+    public CategoryDTO(Long categoryId, boolean enabled) {
+        this.categoryId = categoryId;
+        this.enabled = enabled;
+    }
+
+
+
+
+
+    public CategoryDTO(Long categoryId, String name, Long userId) {
+        this.categoryId = categoryId;
+        this.name = name;
+        this.userId = userId;
+    }
+
+
 
     public CategoryDTO() {
     }
@@ -32,6 +61,22 @@ public class CategoryDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+
+
+
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+
+
+
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
 

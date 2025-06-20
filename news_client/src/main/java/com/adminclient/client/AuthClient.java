@@ -34,6 +34,9 @@ public class AuthClient {
 
             ApiResponse<UserDTO> api = JsonUtil.mapper().readValue(res.getBody(), userType);
             System.out.println(api.getMessage());
+            
+                System.out.println(api.getMessage());
+            
             return api.isSuccess();
         } catch (HttpClientErrorException ex) {
             String msg = ErrorUtil.extractErrorMessage(ex, JsonUtil.mapper());
@@ -49,13 +52,16 @@ public class AuthClient {
     public boolean login(String email, String password) {
         Map<String, String> body = Map.of("email", email, "password", password);
         try {
-            ResponseEntity<String> res = restTemplate.postForEntity(BASE + "/login", body, String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(BASE + "/login", body, String.class);
 
-            ApiResponse<UserDTO> api = JsonUtil.mapper().readValue(res.getBody(), userType);
+            ApiResponse<UserDTO> api = JsonUtil.mapper().readValue(response.getBody(), userType);
             if (api.isSuccess()) {
-
+                System.out.println("Hi "+api.getData().getName());
+                System.out.println("You have logged In successfully");
                 session.login(api.getData());
-                return true;
+                return api.isSuccess();
+            }else{
+                 System.out.println(api.getMessage());
             }
 
         } catch (HttpClientErrorException ex) {

@@ -2,14 +2,17 @@ package com.news_aggregation_system.service.news;
 
 import com.news_aggregation_system.dto.ArticleDTO;
 import com.news_aggregation_system.dto.NewsSourceDTO;
+import com.news_aggregation_system.exception.AlreadyExistsException;
 import com.news_aggregation_system.exception.NotFoundException;
 import com.news_aggregation_system.mapper.ArticleMapper;
 import com.news_aggregation_system.model.Article;
-import com.news_aggregation_system.model.NewsSource;
+import com.news_aggregation_system.model.ArticleReport;
+import com.news_aggregation_system.model.User;
+import com.news_aggregation_system.repository.ArticleReportRepository;
 import com.news_aggregation_system.repository.ArticleRepository;
-import com.news_aggregation_system.repository.NewsSourceRepository;
 
 import com.news_aggregation_system.service.admin.NewsSourceService;
+import com.news_aggregation_system.service.admin.SystemConfigService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,15 +28,15 @@ public class NewsAggregationServiceImpl implements NewsAggregationService {
     private final ArticleRepository articleRepository;
     private final NewsSourceService newsSourceService;
     private final ExternalNewsFetcherService fetcherService;
-    
+    private  final ArticleReportRepository articleReportRepository;
+private final SystemConfigService systemConfigService;
 
-
-
-    public NewsAggregationServiceImpl(ArticleRepository articleRepository,
-            NewsSourceService newsSourceService, ExternalNewsFetcherService fetcherService) {
+    public NewsAggregationServiceImpl(ArticleRepository articleRepository, NewsSourceService newsSourceService, ExternalNewsFetcherService fetcherService, ArticleReportRepository articleReportRepository, SystemConfigService systemConfigService) {
         this.articleRepository = articleRepository;
         this.newsSourceService = newsSourceService;
         this.fetcherService = fetcherService;
+        this.articleReportRepository = articleReportRepository;
+        this.systemConfigService = systemConfigService;
     }
 
     @Override
@@ -114,6 +117,41 @@ public class NewsAggregationServiceImpl implements NewsAggregationService {
         return sortedArticles.stream()
                 .map(ArticleMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public void hideArticle(Long articleId) {
+        articleRepository.hideArticleById(articleId);
+    }
+
+    @Override
+    public void unHideArticle(Long articleId) {
+        articleRepository.unhideArticleById(articleId);
+    }
+
+    @Override
+    public void reportArticle(Long articleId, Long userId, String reason) {
+
+        if (articleReportRepository.existsByArticleArticleIdAndReportedByUserId(articleId,userId)) {
+            throw new AlreadyExistsException("Article Report","id");
+        }
+
+        ArticleReport report = new ArticleReport();
+        Article article=new Article();
+        report.setArticle(article);
+        User user=new User();
+        user.setUserId(userId);
+        report.setReportedBy(user);
+        report.setReason(reason);
+        report.setReportedAt(new Date());
+
+        articleReportRepository.save(report);
+
+        long count = articleReportRepository.countByArticle(article);
+        long REPORT_THRESHOLD=systemConfigService.getCurrentReportThreshold();
+        if (count >= REPORT_THRESHOLD) {
+          hideArticle(articleId);
+        }
     }
 
 

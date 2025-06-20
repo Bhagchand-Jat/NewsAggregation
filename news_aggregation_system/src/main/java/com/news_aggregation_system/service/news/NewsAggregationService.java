@@ -21,4 +21,8 @@ public interface NewsAggregationService extends BaseService<ArticleDTO, Long> {
     List<ArticleDTO> saveAllArticles(List<ArticleDTO> articleDTOs);
 
     List<ArticleDTO> getArticlesSortedByLikesAndDislikes();
+
+    void hideArticle(Long articleId);
+    void unHideArticle(Long articleId);
+    void reportArticle(Long articleId, Long userId, String reason);
 }

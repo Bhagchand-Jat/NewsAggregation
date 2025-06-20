@@ -2,6 +2,8 @@ package com.news_aggregation_system.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
+import java.time.LocalDateTime;
+
 public class NewsSourceDTO {
     private Long sourceId;
 
@@ -13,6 +15,7 @@ public class NewsSourceDTO {
 
     private boolean enabled=true;
 
+    private LocalDateTime lastAccessed;
 
     public NewsSourceDTO() {
     }
@@ -47,5 +50,13 @@ public class NewsSourceDTO {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public LocalDateTime getLastAccessed() {
+        return lastAccessed;
+    }
+
+    public void setLastAccessed(LocalDateTime lastAccessed) {
+        this.lastAccessed = lastAccessed;
     }
 }

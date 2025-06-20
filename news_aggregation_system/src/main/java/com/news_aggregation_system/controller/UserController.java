@@ -5,6 +5,7 @@ import com.news_aggregation_system.dto.CategoryDTO;
 import com.news_aggregation_system.dto.UserDTO;
 import com.news_aggregation_system.response.ApiResponse;
 import com.news_aggregation_system.service.admin.CategoryService;
+import com.news_aggregation_system.service.news.NewsAggregationService;
 import com.news_aggregation_system.service.user.SavedArticleService;
 import com.news_aggregation_system.service.user.UserService;
 import jakarta.validation.Valid;
@@ -20,19 +21,14 @@ public class UserController {
     private final UserService userService;
     private final SavedArticleService savedArticleService;
    private  final CategoryService categoryService;
+   private  final NewsAggregationService newsAggregationService;
 
-    public UserController(UserService userService, SavedArticleService savedArticleService, CategoryService categoryService) {
+    public UserController(UserService userService, SavedArticleService savedArticleService, CategoryService categoryService, NewsAggregationService newsAggregationService) {
         this.userService = userService;
         this.savedArticleService = savedArticleService;
         this.categoryService = categoryService;
+        this.newsAggregationService = newsAggregationService;
     }
-
-//    @PostMapping
-//    public ResponseEntity<ApiResponse<UserDTO>> registerUser(@Valid @RequestBody UserDTO userDTO) {
-//        UserDTO createdUser = userService.create(userDTO);
-//        ApiResponse<UserDTO> response = new ApiResponse<>("User registered successfully", true, createdUser);
-//        return ResponseEntity.ok(response);
-//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<UserDTO>> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
@@ -76,8 +72,16 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.ok("Article saved successfully"));
     }
 
+    @GetMapping("/categories/enabled")
     public  ResponseEntity<ApiResponse<List<CategoryDTO>>> getAllEnabledCategories() {
         return ResponseEntity.ok(ApiResponse.ok(categoryService.getEnabledCategories()));
     }
+
+    @PostMapping("/articles/{articleId}/report")
+    public ResponseEntity<ApiResponse<Void>> reportArticle(@PathVariable Long articleId, @RequestParam Long userId, @RequestParam String reason) {
+        newsAggregationService.reportArticle(articleId, userId, reason);
+        return ResponseEntity.ok(ApiResponse.ok("Article reported successfully"));
+    }
+
 }
 

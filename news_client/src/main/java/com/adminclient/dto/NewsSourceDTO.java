@@ -13,6 +13,10 @@ public class NewsSourceDTO {
     public NewsSourceDTO() {
     }
 
+    public NewsSourceDTO(long id, String apiKey, boolean active) {
+        //TODO Auto-generated constructor stub
+    }
+
     public Long getSourceId() {
         return sourceId;
     }

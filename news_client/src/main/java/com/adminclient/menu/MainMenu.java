@@ -23,16 +23,17 @@ public class MainMenu {
 
     public void loop() throws java.io.IOException {
         while (true) {
-            System.out.println("\n=== News Aggregator ===");
+            System.out.println("\nWelcome to the News Aggregator application. Please choose the\r\n" + //
+                                "options below.");
             System.out.println("1. Login");
             System.out.println("2. Sign up");
             System.out.println("3. Exit");
-            int ch = console.readInt("Choose: ");
-            switch (ch) {
+            int choice = console.readInt("Choose: ");
+            switch (choice) {
                 case 1 -> login();
                 case 2 -> signup();
                 case 3 -> { return; }
-                default -> System.out.println("Invalid");
+                default -> System.out.println("Invalid Choice");
             }
         }
     }

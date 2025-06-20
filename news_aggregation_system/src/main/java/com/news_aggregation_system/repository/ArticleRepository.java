@@ -3,6 +3,7 @@ package com.news_aggregation_system.repository;
 import com.news_aggregation_system.model.Article;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -38,4 +39,12 @@ List<Article> findByCategoryName(@Param("categoryName") String categoryName);
 
     List<Article> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(String titleKeyword,
                                                                                String contentKeyword);
+
+    @Modifying
+    @Query("UPDATE Article a SET a.enabled = false WHERE a.articleId = :articleId")
+    void unhideArticleById(@Param("articleId") Long articleId);
+
+    @Modifying
+    @Query("UPDATE Article a SET a.enabled = true WHERE a.articleId = :articleId")
+    void hideArticleById(@Param("articleId") Long articleId);
 }

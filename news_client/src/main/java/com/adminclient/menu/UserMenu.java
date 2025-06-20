@@ -40,26 +40,26 @@ public class UserMenu {
     }
 
     private void showHeadlines() throws java.io.IOException {
-        List<ArticleDTO> list = articleClient.headlinesToday();
-        list.forEach(this::printArticle);
-        if (!list.isEmpty()) {
+        List<ArticleDTO> articles = articleClient.headlinesToday();
+        articles.forEach(this::printArticle);
+        if (!articles.isEmpty()) {
             if (console.readBoolean("Save one? (y/n): ")) {
-                long aid = console.readLong("Article ID: ");
-                articleClient.saveArticle(aid);
+                long articleId = console.readLong("Article ID: ");
+                articleClient.saveArticle(articleId);
             }
         }
     }
 
     private void search() throws java.io.IOException {
-        String q = console.readLine("Query: ");
-        List<ArticleDTO> list = articleClient.search(q);
-        list.forEach(this::printArticle);
+        String queryInput = console.readLine("Query: ");
+        List<ArticleDTO> articles = articleClient.search(queryInput);
+        articles.forEach(this::printArticle);
     }
 
     private void saved() throws java.io.IOException {
-        List<ArticleDTO> list = articleClient.savedArticles();
-        list.forEach(this::printArticle);
-        if (!list.isEmpty()) {
+        List<ArticleDTO> articles = articleClient.savedArticles();
+        articles.forEach(this::printArticle);
+        if (!articles.isEmpty()) {
             if (console.readBoolean("Delete one? (y/n): ")) {
                 long aid = console.readLong("Article ID: ");
                 articleClient.deleteSaved(aid);

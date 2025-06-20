@@ -11,6 +11,7 @@ public class NewsSourceMapper {
         dto.setSourceUrl(source.getSourceUrl());
         dto.setSourceApiKey(source.getSourceApiKey());
         dto.setEnabled(source.isEnabled());
+        dto.setLastAccessed(source.getLastAccessed());
         return dto;
     }
 
@@ -19,6 +20,7 @@ public class NewsSourceMapper {
         source.setSourceUrl(dto.getSourceUrl());
         source.setSourceApiKey(dto.getSourceApiKey());
          source.setEnabled(dto.isEnabled());
+         source.setLastAccessed(dto.getLastAccessed());
         return source;
     }
 }

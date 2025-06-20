@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class CategoryClient extends BaseClient {
 
@@ -40,9 +39,25 @@ public class CategoryClient extends BaseClient {
 
     }
 
+    public List<CategoryDTO> findAllEnabled() {
+        try {
+            ResponseEntity<String> res = restTemplate.getForEntity(BASE+"/enabled", String.class);
+            return JsonUtil.mapper().readValue(res.getBody(), listType).getData();
+        } catch (HttpClientErrorException ex) {
+            String msg = ErrorUtil.extractErrorMessage(ex, JsonUtil.mapper());
+            System.out.println("Getting Categories Failed: " + msg);
+
+        } catch (Exception exception) {
+            System.out.println("Error: " + exception.getMessage());
+
+        }
+        return new ArrayList<>();
+
+    }
+
     public void addCategory(String name) {
         try {
-            restTemplate.postForObject(BASE, Map.of("name", name), Void.class);
+            restTemplate.postForObject(BASE, new CategoryDTO(name, session.getUser().getUserId()), String.class);
         } catch (HttpClientErrorException ex) {
             String msg = ErrorUtil.extractErrorMessage(ex, JsonUtil.mapper());
             System.out.println("Add Category Failed: " + msg);

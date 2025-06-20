@@ -17,7 +17,7 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-    @GetMapping("/user/{userId}")
+    @PutMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<List<NotificationDTO>>> list(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "false") boolean read) {

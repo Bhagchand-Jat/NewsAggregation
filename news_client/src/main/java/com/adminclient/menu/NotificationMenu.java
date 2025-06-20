@@ -36,7 +36,7 @@ public class NotificationMenu {
     }
 
     private void viewNotifications() throws java.io.IOException {
-        List<NotificationDTO> list = notificationClient.findAll();
+        List<NotificationDTO> list = notificationClient.findAllUnRead();
         list.forEach(notification -> System.out.printf("ID:%-3d %s [%s]\n",
                 notification.getNotificationId(), notification.getMessage(), notification.getCreatedAt()));
     }
