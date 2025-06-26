@@ -20,8 +20,8 @@ public class UserController {
 
     private final UserService userService;
     private final SavedArticleService savedArticleService;
-   private  final CategoryService categoryService;
-   private  final NewsAggregationService newsAggregationService;
+    private final CategoryService categoryService;
+    private final NewsAggregationService newsAggregationService;
 
     public UserController(UserService userService, SavedArticleService savedArticleService, CategoryService categoryService, NewsAggregationService newsAggregationService) {
         this.userService = userService;
@@ -73,7 +73,7 @@ public class UserController {
     }
 
     @GetMapping("/categories/enabled")
-    public  ResponseEntity<ApiResponse<List<CategoryDTO>>> getAllEnabledCategories() {
+    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getAllEnabledCategories() {
         return ResponseEntity.ok(ApiResponse.ok(categoryService.getEnabledCategories()));
     }
 

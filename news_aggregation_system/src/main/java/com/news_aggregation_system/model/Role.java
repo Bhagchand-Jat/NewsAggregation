@@ -2,8 +2,6 @@ package com.news_aggregation_system.model;
 
 import jakarta.persistence.*;
 
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "roles")
@@ -15,9 +13,6 @@ public class Role {
 
     @Column(nullable = false, name = "role", length = 100)
     private String role;
-
-//    @OneToMany(mappedBy = "role")
-//    private Set<User> users=new HashSet<>();
 
     public Role() {
     }
@@ -38,11 +33,4 @@ public class Role {
         this.role = role;
     }
 
-//    public Set<User> getUsers() {
-//        return users;
-//    }
-//
-//    public void setUsers(Set<User> users) {
-//        this.users = users;
-//    }
 }

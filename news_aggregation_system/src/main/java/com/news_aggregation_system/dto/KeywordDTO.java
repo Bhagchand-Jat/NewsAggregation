@@ -10,6 +10,8 @@ public class KeywordDTO {
 
     private Long userId;
 
+    private boolean enabled;
+
     public KeywordDTO() {
     }
 
@@ -37,5 +39,11 @@ public class KeywordDTO {
         this.userId = userId;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }

@@ -12,7 +12,8 @@ public class NotificationDTO {
     @NotBlank(message = "Notification message is required")
     private String message;
 
-    private boolean read;
+    private boolean viewed = false;
+
     private Date createdAt;
     private Date readAt;
 
@@ -43,13 +44,6 @@ public class NotificationDTO {
         this.message = message;
     }
 
-    public boolean isRead() {
-        return read;
-    }
-
-    public void setRead(boolean read) {
-        this.read = read;
-    }
 
     public Date getCreatedAt() {
         return createdAt;
@@ -67,4 +61,11 @@ public class NotificationDTO {
         this.readAt = readAt;
     }
 
+    public boolean isViewed() {
+        return viewed;
+    }
+
+    public void setViewed(boolean viewed) {
+        this.viewed = viewed;
+    }
 }

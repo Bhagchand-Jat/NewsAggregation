@@ -18,6 +18,6 @@ public interface CategoryPreferenceService {
 
     List<Category> getEnabledCategories(Long userId);
 
-    List<CategoryStatusDTO> getCategoryStatuses(Long userId);
+    List<CategoryStatusDTO> getEnabledCategoriesStatus(Long userId);
 }
 

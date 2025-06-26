@@ -14,5 +14,5 @@ public interface NotificationService {
 
     NotificationDTO createNotification(Notification notification);
 
-    void deleteByIsReadTrueAndReadAtBefore(Date date);
+    void deleteByIsViewedTrueAndReadAtBefore(Date date);
 }

@@ -7,7 +7,6 @@ import com.news_aggregation_system.mapper.UserMapper;
 import com.news_aggregation_system.model.User;
 import com.news_aggregation_system.repository.UserRepository;
 import com.news_aggregation_system.service.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

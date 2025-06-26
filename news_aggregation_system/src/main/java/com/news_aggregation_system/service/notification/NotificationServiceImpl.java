@@ -36,11 +36,11 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public List<NotificationDTO> getNotificationsByUserIdAndReadStatusAndUpdateMarkAsRead(Long userId, boolean isRead) {
-        List<Notification> notifications = notificationRepository.findByUserUserIdAndRead(userId, isRead);
+        List<Notification> notifications = notificationRepository.findByUserUserIdAndViewed(userId, isRead);
 
         Date now = new Date();
         for (Notification notification : notifications) {
-            notification.setRead(true);
+            notification.setViewed(true);
             notification.setReadAt(now);
         }
         notificationRepository.saveAll(notifications);
@@ -72,40 +72,64 @@ public class NotificationServiceImpl implements NotificationService {
         return NotificationMapper.toDto(notification);
     }
 
-    private Set<ArticleDTO> getMatchedArticles(List<ArticleDTO> articles, NotificationConfig config) {
+    private Set<ArticleDTO> getMatchedArticles(List<ArticleDTO> articles,
+                                               NotificationConfig config) {
 
-        // Step 1: Get user's enabled category preferences
-        Set<String> enabledCategories = config.getCategoryPreferences().stream()
-                .filter(UserCategoryPreference::isEnabled)
-                .map(pref -> pref.getCategory().getName().toLowerCase())
-                .collect(Collectors.toSet());
+        Set<String> enabledCategories = extractEnabledCategoryNames(config);
+        Set<ArticleDTO> categoryMatchedArticles = filterByCategories(articles, enabledCategories);
 
-        // Step 2: Match articles with any of the enabled categories
-        Set<ArticleDTO> categoryMatched = articles.stream()
-                .filter(article -> article.getCategories().stream()
-                        .map(c -> c.getName().toLowerCase())
-                        .anyMatch(enabledCategories::contains))
-                .collect(Collectors.toSet());
+        if (!config.isKeywordsEnabled()) {
+            return categoryMatchedArticles;
+        }
 
-        Set<ArticleDTO> matchedArticles = new HashSet<>(categoryMatched);
+        Set<ArticleDTO> matchedArticles = new HashSet<>(categoryMatchedArticles);
 
-        // Step 3: Match remaining articles (not matched by category) with keywords
-        Set<ArticleDTO> remainingArticles = new HashSet<>(articles);
-        remainingArticles.removeAll(categoryMatched);
+        Set<ArticleDTO> remaining = new HashSet<>(articles);
+        remaining.removeAll(categoryMatchedArticles);
+        if (remaining.isEmpty()) {
+            return categoryMatchedArticles;
+        }
 
-        if (config.isKeywordsEnabled() && !remainingArticles.isEmpty()) {
-            Set<String> userKeywords = config.getUser().getKeywords().stream()
-                    .map(k -> k.getName().toLowerCase())
-                    .collect(Collectors.toSet());
-
-            Set<ArticleDTO> keywordMatched = remainingArticles.stream()
-                    .filter(article -> containsKeyword(article, userKeywords))
-                    .collect(Collectors.toSet());
-
-            matchedArticles.addAll(keywordMatched);
+        Set<String> userKeywords = extractUserKeywords(config);
+        Set<ArticleDTO> keywordMatchedArticles = filterByKeywords(remaining, userKeywords);
+        if (!keywordMatchedArticles.isEmpty()) {
+            matchedArticles.addAll(keywordMatchedArticles);
         }
 
         return matchedArticles;
+    }
+
+    private Set<String> extractEnabledCategoryNames(NotificationConfig config) {
+        return config.getCategoryPreferences().stream()
+                .filter(UserCategoryPreference::isEnabled)
+                .map(pref -> pref.getCategory().getName().toLowerCase())
+                .collect(Collectors.toCollection(HashSet::new));
+    }
+
+    private Set<ArticleDTO> filterByCategories(List<ArticleDTO> articles,
+                                               Set<String> categories) {
+        if (categories.isEmpty()) return Set.of();
+
+        return articles.stream()
+                .filter(article -> article.getCategories().stream()
+                        .map(c -> c.getName().toLowerCase())
+                        .anyMatch(categories::contains))
+                .collect(Collectors.toCollection(HashSet::new));
+    }
+
+    private Set<String> extractUserKeywords(NotificationConfig config) {
+        return config.getUser().getKeywords().stream()
+                .map(k -> k.getName().toLowerCase())
+                .collect(Collectors.toCollection(HashSet::new));
+    }
+
+    private Set<ArticleDTO> filterByKeywords(Set<ArticleDTO> articles,
+                                             Set<String> keywords) {
+        if (keywords.isEmpty()) return Set.of();
+
+        return articles.stream()
+                .filter(article -> containsKeyword(article, keywords))
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     private boolean containsKeyword(ArticleDTO article, Set<String> keywords) {
@@ -122,7 +146,7 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notification = new Notification();
         notification.setUser(user);
         notification.setMessage(body.toString());
-        notification.setRead(false);
+        notification.setViewed(false);
         notification.setCreatedAt(new Date());
         return notification;
     }
@@ -139,7 +163,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void deleteByIsReadTrueAndReadAtBefore(Date date) {
-        notificationRepository.deleteByReadTrueAndReadAtBefore(date);
+    public void deleteByIsViewedTrueAndReadAtBefore(Date date) {
+        int deleted = notificationRepository.deleteByViewedTrueAndReadAtBefore(date);
+
     }
 }

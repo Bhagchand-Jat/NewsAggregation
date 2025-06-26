@@ -8,7 +8,7 @@ import java.util.List;
 
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-    List<Notification> findByUserUserIdAndRead(Long userId, boolean read);
+    List<Notification> findByUserUserIdAndViewed(Long userId, boolean viewed);
 
-    void deleteByReadTrueAndReadAtBefore(Date date);
+    int deleteByViewedTrueAndReadAtBefore(Date date);
 }

@@ -1,5 +1,6 @@
 package com.news_aggregation_system.controller;
 
+import com.news_aggregation_system.dto.CategoryStatusDTO;
 import com.news_aggregation_system.dto.KeywordDTO;
 import com.news_aggregation_system.response.ApiResponse;
 import com.news_aggregation_system.service.user.CategoryPreferenceService;
@@ -7,9 +8,11 @@ import com.news_aggregation_system.service.user.KeywordService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
-@RequestMapping("/api/users/{userId}/preferences")
+@RequestMapping("/api/users/{userId}/notifications/preferences")
 public class PreferenceController {
 
     private final CategoryPreferenceService categoryPreferenceService;
@@ -49,5 +52,10 @@ public class PreferenceController {
             @PathVariable Long userId, @PathVariable Long keywordId) {
         keywordService.deleteKeywordByIdAndUserId(userId, keywordId);
         return ResponseEntity.ok(ApiResponse.ok("Keyword deleted"));
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<ApiResponse<List<CategoryStatusDTO>>> getAllEnabledCategoriesWithStatus(@PathVariable Long userId) {
+        return ResponseEntity.ok(ApiResponse.ok(categoryPreferenceService.getEnabledCategoriesStatus(userId)));
     }
 }

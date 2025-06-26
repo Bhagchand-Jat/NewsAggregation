@@ -13,6 +13,9 @@ public class NewsSource {
     private Long sourceId;
 
     @Column(nullable = false)
+    private String sourceName;
+
+    @Column(nullable = false)
     private String sourceUrl;
 
     @Column(nullable = false)
@@ -66,6 +69,14 @@ public class NewsSource {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
     }
 }
 

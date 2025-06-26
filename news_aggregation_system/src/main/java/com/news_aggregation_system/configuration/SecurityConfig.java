@@ -22,8 +22,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
-                        .requestMatchers("/swagger-ui*/**").permitAll()
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
                         .anyRequest().permitAll()
                 )
@@ -33,7 +32,7 @@ public class SecurityConfig {
     }
 
     @Bean
-BCryptPasswordEncoder passwordEncoder() {
+    BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-}
+    }
 }

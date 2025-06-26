@@ -36,10 +36,8 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
 
     @Override
     public UserCategoryPreferenceDTO createPreference(Long userId, Long categoryId, boolean enabled) {
-        User user = fetchUser(userId);
-        Category category = fetchCategory(categoryId);
 
-        userCategoryPreferenceRepository.findByUserAndCategory(user, category).ifPresent(pref -> {
+        userCategoryPreferenceRepository.findByUserUserIdAndCategoryCategoryId(userId, categoryId).ifPresent(pref -> {
             throw new AlreadyExistsException(
                     "CategoryPreference", "userId=" + userId + ", categoryId=" + categoryId);
         });
@@ -49,41 +47,35 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
 
     @Override
     public void deletePreference(Long userId, Long categoryId) {
-        User user = fetchUser(userId);
-        Category category = fetchCategory(categoryId);
 
-        userCategoryPreferenceRepository.findByUserAndCategory(user, category)
-                .ifPresentOrElse(
-                        userCategoryPreferenceRepository::delete,
-                        () -> {
-                            throw new NotFoundException(
-                                    "CategoryPreference", "userId=" + userId + ", categoryId=" + categoryId);
-                        }
-                );
+        int deleted = userCategoryPreferenceRepository.deleteByUserUserIdAndCategoryCategoryId(userId, categoryId);
+        if (deleted < 1) {
+            throw new NotFoundException("CategoryPreference Not found with userId: " + userId + " and categoryId: " + categoryId);
+        }
     }
 
     @Override
     public void enableCategoryForUser(Long userId, Long categoryId) {
-        userCategoryPreferenceRepository
-                .findByUserAndCategory(fetchUser(userId), fetchCategory(categoryId))
-                .orElseGet(() -> createUserCategoryPreference(userId, categoryId));
+        int updated = userCategoryPreferenceRepository.updateEnabledTrueByUserUserIdAndCategoryCategoryId(userId, categoryId);
+        if (updated < 1) {
+            createUserCategoryPreference(userId, categoryId);
+        }
+
 
     }
 
     @Override
     public void disableCategoryForUser(Long userId, Long categoryId) {
-        userCategoryPreferenceRepository.findByUserAndCategory(fetchUser(userId), fetchCategory(categoryId))
-                .ifPresent(preference -> {
-                    preference.setEnabled(false);
-                    userCategoryPreferenceRepository.save(preference);
-                });
+        int deleted = userCategoryPreferenceRepository.deleteByUserUserIdAndCategoryCategoryId(userId, categoryId);
+        if (deleted < 1) {
+            throw new NotFoundException("UserCategoryPreference Not found with userId: " + userId + " and categoryId: " + categoryId);
+        }
     }
 
     @Override
-    @Transactional()
     public List<Category> getEnabledCategories(Long userId) {
-        User user = fetchUser(userId);
-        return userCategoryPreferenceRepository.findByUserAndEnabledTrue(user)
+
+        return userCategoryPreferenceRepository.findByUserUserIdAndEnabledTrue(userId)
                 .stream()
                 .map(UserCategoryPreference::getCategory)
                 .toList();
@@ -111,16 +103,16 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
     }
 
     @Override
-    public List<CategoryStatusDTO> getCategoryStatuses(Long userId) {
-        Set<Long> enabledCatIds = userCategoryPreferenceRepository.findByUserAndEnabledTrue(
-                userRepository.getReferenceById(userId)
+    public List<CategoryStatusDTO> getEnabledCategoriesStatus(Long userId) {
+        Set<Long> enabledCatIds = userCategoryPreferenceRepository.findByUserUserIdAndEnabledTrue(
+                userId
         ).stream().map(p -> p.getCategory().getCategoryId()).collect(Collectors.toSet());
 
-        return categoryRepository.findAll().stream()
-                .map(cat -> new CategoryStatusDTO(
-                        cat.getCategoryId(),
-                        cat.getName(),
-                        enabledCatIds.contains(cat.getCategoryId())))
+        return categoryRepository.findByEnabledTrue().stream()
+                .map(category -> new CategoryStatusDTO(
+                        category.getCategoryId(),
+                        category.getName(),
+                        enabledCatIds.contains(category.getCategoryId())))
                 .toList();
     }
 }

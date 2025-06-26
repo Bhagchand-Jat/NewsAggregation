@@ -43,7 +43,7 @@ public class NewsController {
 
     @GetMapping("/date")
     public ResponseEntity<ApiResponse<List<ArticleDTO>>> getByDate(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date) {
+            @RequestParam(value = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date) {
         List<ArticleDTO> articles = newsService.getArticlesByDate(date);
         return ResponseEntity.ok(ApiResponse.ok("Articles on date sorted by reactions", articles));
     }

@@ -1,7 +1,6 @@
 package com.news_aggregation_system.mapper;
 
 import com.news_aggregation_system.dto.UserDTO;
-import com.news_aggregation_system.model.Role;
 import com.news_aggregation_system.model.User;
 
 public class UserMapper {

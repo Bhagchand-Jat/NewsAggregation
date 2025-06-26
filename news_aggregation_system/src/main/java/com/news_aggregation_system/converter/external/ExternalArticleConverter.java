@@ -8,6 +8,8 @@ public interface ExternalArticleConverter {
 
     boolean supports(String url);
 
+    String buildUrl(String baseUrl, String apiKey);
+
     List<ArticleDTO> convert(String json) throws Exception;
 
 }

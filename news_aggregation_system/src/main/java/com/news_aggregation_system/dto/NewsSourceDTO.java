@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 
 public class NewsSourceDTO {
     private Long sourceId;
+@NotBlank(message = "Source Name is required")
+    private String sourceName;
 
     @NotBlank(message = "Source URL is required")
     private String sourceUrl;
@@ -58,5 +60,13 @@ public class NewsSourceDTO {
 
     public void setLastAccessed(LocalDateTime lastAccessed) {
         this.lastAccessed = lastAccessed;
+    }
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
     }
 }

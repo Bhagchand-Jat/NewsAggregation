@@ -12,14 +12,15 @@ import java.util.List;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("""
-    SELECT a FROM Article a
-    JOIN a.categories c
-    WHERE LOWER(c.name) = LOWER(:categoryName)
-""")
-List<Article> findByCategoryName(@Param("categoryName") String categoryName);
+                SELECT a FROM Article a
+                JOIN a.categories c
+                WHERE LOWER(c.name) = LOWER(:categoryName)
+            """)
+    List<Article> findByCategoryName(@Param("categoryName") String categoryName);
 
 
-    List<Article> findByPublishedAt(Date publishedAt);
+    @Query("SELECT a FROM Article a WHERE DATE(a.publishedAt) = :publishedAt")
+    List<Article> findByPublishedAtDate(@Param("publishedAt") Date publishedAt);
 
     @Query("SELECT a FROM Article a WHERE a.publishedAt BETWEEN :start AND :end")
     List<Article> findAllByPublishedAtBetween(@Param("start") Date start, @Param("end") Date end);
@@ -41,10 +42,7 @@ List<Article> findByCategoryName(@Param("categoryName") String categoryName);
                                                                                String contentKeyword);
 
     @Modifying
-    @Query("UPDATE Article a SET a.enabled = false WHERE a.articleId = :articleId")
-    void unhideArticleById(@Param("articleId") Long articleId);
+    @Query("UPDATE Article a SET a.enabled = :enabled WHERE a.articleId = :articleId")
+    int updateArticleStatusById(@Param("articleId") Long articleId, @Param("enabled") boolean enabled);
 
-    @Modifying
-    @Query("UPDATE Article a SET a.enabled = true WHERE a.articleId = :articleId")
-    void hideArticleById(@Param("articleId") Long articleId);
 }

@@ -19,7 +19,8 @@ public class ArticleReport {
 
     private String reason;
 
-    private Date reportedAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date reportedAt = new Date();
 
     public ArticleReport() {
     }

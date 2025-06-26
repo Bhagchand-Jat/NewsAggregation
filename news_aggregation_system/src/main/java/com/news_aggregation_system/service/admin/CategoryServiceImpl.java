@@ -6,14 +6,12 @@ import com.news_aggregation_system.exception.NotFoundException;
 import com.news_aggregation_system.mapper.CategoryMapper;
 import com.news_aggregation_system.model.Category;
 import com.news_aggregation_system.repository.CategoryRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Service
@@ -52,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Set<Category> getOrCreateCategories(Set<String> names) {
         Set<Category> categories = new HashSet<>();
-        for(String name : names) {
+        for (String name : names) {
             Category category = getOrCreateCategory(name);
             categories.add(category);
         }
@@ -83,15 +81,23 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO getByCategoryName(String name) {
-    Category category=   categoryRepository.findByNameIgnoreCase(name)
-       .orElseThrow(()-> new NotFoundException("Category", "name: " + name));
-       return CategoryMapper.toDto(category);
+        Category category = categoryRepository.findByNameIgnoreCase(name)
+                .orElseThrow(() -> new NotFoundException("Category", "name: " + name));
+        return CategoryMapper.toDto(category);
     }
 
     @Override
     public List<CategoryDTO> getEnabledCategories() {
         return categoryRepository.findByEnabledTrue().stream().map(CategoryMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public void updateCategoryStatus(Long categoryId, boolean isEnabled) {
+        int updated = categoryRepository.updateEnabledByCategoryId(isEnabled, categoryId);
+        if (updated < 1) {
+            throw new NotFoundException("Category", "id: " + categoryId);
+        }
     }
 
 

@@ -2,10 +2,6 @@ package com.news_aggregation_system.mapper;
 
 import com.news_aggregation_system.dto.ArticleDTO;
 import com.news_aggregation_system.model.Article;
-import com.news_aggregation_system.model.Category;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ArticleMapper {
 

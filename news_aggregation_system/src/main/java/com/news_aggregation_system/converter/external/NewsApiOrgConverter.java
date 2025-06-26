@@ -3,7 +3,6 @@ package com.news_aggregation_system.converter.external;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.news_aggregation_system.dto.ArticleDTO;
-import com.news_aggregation_system.dto.CategoryDTO;
 import com.news_aggregation_system.model.Category;
 import com.news_aggregation_system.service.admin.CategoryService;
 import org.slf4j.Logger;
@@ -18,10 +17,9 @@ import java.util.stream.Collectors;
 
 @Component
 public class NewsApiOrgConverter implements ExternalArticleConverter {
-    private final Logger logger = LoggerFactory.getLogger(NewsApiOrgConverter.class);
     private static final String IDENTIFIER = "newsapi.org";
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
+    private final Logger logger = LoggerFactory.getLogger(NewsApiOrgConverter.class);
     private final CategoryService categoryService;
 
     public NewsApiOrgConverter(CategoryService categoryService) {
@@ -34,16 +32,32 @@ public class NewsApiOrgConverter implements ExternalArticleConverter {
     }
 
     @Override
+    public String buildUrl(String baseUrl, String apiKey) {
+
+
+        StringBuilder urlBuilder = new StringBuilder(baseUrl);
+
+        if (baseUrl.contains("?")) {
+            urlBuilder.append("&");
+        } else {
+            urlBuilder.append("?");
+        }
+
+        urlBuilder
+                .append("apiKey=").append(apiKey);
+
+        return urlBuilder.toString();
+    }
+
+    @Override
     public List<ArticleDTO> convert(String json) throws Exception {
+        logger.info(IDENTIFIER);
 
         var root = MAPPER.readTree(json);
-        logger.info(IDENTIFIER + "{}", root);
         List<NewsApiOrgArticle> articles = MAPPER.convertValue(
                 root.get("articles"),
                 new TypeReference<>() {
                 });
-        logger.info(IDENTIFIER + "{}", root);
-
 
         return articles.stream().map(article -> {
             ArticleDTO articleDTO = new ArticleDTO();

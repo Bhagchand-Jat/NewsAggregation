@@ -12,6 +12,6 @@ public interface KeywordService {
 
     List<KeywordDTO> getAllKeywordsByUserId(Long userId);
 
-    KeywordDTO updateKeyword(KeywordDTO keywordDTO);
+    void updateKeywordStatus(Long keywordId, boolean enabled);
 
 }

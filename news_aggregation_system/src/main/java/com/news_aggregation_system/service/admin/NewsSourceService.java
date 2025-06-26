@@ -7,5 +7,8 @@ import java.util.List;
 
 public interface NewsSourceService extends BaseService<NewsSourceDTO, Long> {
     List<NewsSourceDTO> findAllByEnabled();
-    List<NewsSourceDTO > getAllByEnabledAndUpdateLastModified();
+
+    List<NewsSourceDTO> getAllByEnabledAndUpdateLastModified();
+
+    void updateSourceApiKeyById(Long sourceId, String sourceApiKey);
 }

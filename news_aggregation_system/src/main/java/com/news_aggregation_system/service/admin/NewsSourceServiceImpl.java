@@ -33,7 +33,7 @@ public class NewsSourceServiceImpl implements NewsSourceService {
     public NewsSourceDTO update(Long id, NewsSourceDTO newsSourceDTO) {
         NewsSource existing = getNewsSourceOrThrow(id);
         existing.setSourceApiKey(newsSourceDTO.getSourceApiKey());
-        existing.setSourceUrl(newsSourceDTO.getSourceUrl());
+        existing.setEnabled(newsSourceDTO.isEnabled());
         return NewsSourceMapper.toDto(newsSourceRepository.save(existing));
     }
 
@@ -73,11 +73,20 @@ public class NewsSourceServiceImpl implements NewsSourceService {
     public List<NewsSourceDTO> getAllByEnabledAndUpdateLastModified() {
         List<NewsSource> newsSources = newsSourceRepository.findByEnabledTrue();
         for (NewsSource newsSource : newsSources) {
-            newsSourceRepository.updateLastAccessed(newsSource.getSourceId(),LocalDateTime.now());
+            newsSourceRepository.updateLastAccessed(newsSource.getSourceId(), LocalDateTime.now());
         }
         return newsSources
                 .stream()
                 .map(NewsSourceMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateSourceApiKeyById(Long sourceId, String sourceApiKey) {
+        int updated = newsSourceRepository.updateSourceApiKey(sourceId, sourceApiKey);
+        if (updated < 1) {
+            throw new NotFoundException("News Source", "id: " + sourceId);
+        }
+
     }
 }

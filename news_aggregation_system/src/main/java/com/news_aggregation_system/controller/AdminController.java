@@ -2,12 +2,10 @@ package com.news_aggregation_system.controller;
 
 import com.news_aggregation_system.dto.CategoryDTO;
 import com.news_aggregation_system.dto.NewsSourceDTO;
-import com.news_aggregation_system.model.Article;
 import com.news_aggregation_system.response.ApiResponse;
 import com.news_aggregation_system.service.admin.CategoryService;
 import com.news_aggregation_system.service.admin.NewsSourceService;
 import com.news_aggregation_system.service.news.NewsAggregationService;
-import com.news_aggregation_system.service.news.NewsAggregationServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +16,7 @@ import java.util.List;
 public class AdminController {
     private final NewsSourceService newsSourceService;
     private final CategoryService categoryService;
-    private  final NewsAggregationService newsAggregationService;
+    private final NewsAggregationService newsAggregationService;
 
     public AdminController(NewsSourceService newsSourceService, CategoryService categoryService, NewsAggregationService newsAggregationService) {
         this.newsSourceService = newsSourceService;
@@ -28,7 +26,7 @@ public class AdminController {
 
     @PostMapping("/categories")
     public ResponseEntity<ApiResponse<CategoryDTO>> createCategory(@RequestBody CategoryDTO dto) {
-        return ResponseEntity.ok(ApiResponse.ok("Category created", categoryService.create(dto)));
+        return ResponseEntity.ok(ApiResponse.ok("Category created Successfully", categoryService.create(dto)));
     }
 
     @GetMapping("/categories")
@@ -36,26 +34,41 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.ok(categoryService.getAll()));
     }
 
-    @GetMapping("/categories/enabled")
-    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getEnabledCategories() {
-        return ResponseEntity.ok(ApiResponse.ok(categoryService.getEnabledCategories()));
+    @PatchMapping("/categories/{id}")
+    public ResponseEntity<ApiResponse<Void>> updateCategoryStatus(@PathVariable Long id, @RequestParam("isEnabled") boolean isEnabled) {
+        categoryService.updateCategoryStatus(id, isEnabled);
+        return ResponseEntity.ok(ApiResponse.ok("Category Status Updated Successfully"));
     }
 
     @DeleteMapping("/categories/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Long id) {
         categoryService.delete(id);
-        return ResponseEntity.ok(ApiResponse.ok("Category deleted"));
+        return ResponseEntity.ok(ApiResponse.ok("Category deleted Successfully"));
+    }
+
+    @GetMapping("/news-sources")
+    public ResponseEntity<ApiResponse<List<NewsSourceDTO>>> getAllNewsSources() {
+        return ResponseEntity.ok(ApiResponse.ok("News source Received Successfully", newsSourceService.getAll()));
     }
 
     @PostMapping("/news-sources")
-    public ResponseEntity<ApiResponse<NewsSourceDTO>> create(@RequestBody NewsSourceDTO dto) {
-        return ResponseEntity.ok(ApiResponse.ok("News source created", newsSourceService.create(dto)));
+    public ResponseEntity<ApiResponse<NewsSourceDTO>> createNewsSource(@RequestBody NewsSourceDTO dto) {
+        return ResponseEntity.ok(ApiResponse.ok("News source created Successfully", newsSourceService.create(dto)));
     }
 
     @PutMapping("/news-sources/{id}")
     public ResponseEntity<ApiResponse<NewsSourceDTO>> updateNewsSource(
             @PathVariable Long id, @RequestBody NewsSourceDTO dto) {
-        return ResponseEntity.ok(ApiResponse.ok("News source updated", newsSourceService.update(id, dto)));
+        return ResponseEntity.ok(ApiResponse.ok("News source updated Successfully", newsSourceService.update(id, dto)));
+    }
+
+    @PatchMapping("/news-sources/{id}/apikey")
+    public ResponseEntity<ApiResponse<Void>> updateSourceApiKey(
+            @PathVariable("id") Long sourceId,
+            @RequestParam("newApiKey") String newApiKey) {
+
+        newsSourceService.updateSourceApiKeyById(sourceId, newApiKey);
+        return ResponseEntity.ok(ApiResponse.ok("API key updated successfully"));
     }
 
 
@@ -66,13 +79,13 @@ public class AdminController {
 
     @GetMapping("/news-sources/{id}")
     public ResponseEntity<ApiResponse<NewsSourceDTO>> getNewsSourceById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.ok("News source created", newsSourceService.getById(id)));
+        return ResponseEntity.ok(ApiResponse.ok("News source Received Successfully", newsSourceService.getById(id)));
     }
 
-    @PutMapping("/admin/articles/{id}/hide")
-    public ResponseEntity<ApiResponse<Void>> hideArticle(@PathVariable Long id) {
-        newsAggregationService.hideArticle(id);
-        return ResponseEntity.ok(ApiResponse.ok("Article hidden"));
+    @PatchMapping("/admin/articles/{id}/status")
+    public ResponseEntity<ApiResponse<Void>> updateArticleStatus(@PathVariable Long id, @RequestParam("isEnabled") boolean isEnabled) {
+        newsAggregationService.updateArticleStatusById(id, isEnabled);
+        return ResponseEntity.ok(ApiResponse.ok(Boolean.parseBoolean("Article" + isEnabled) ? "enabled" : "hidden" + "Successfully"));
     }
 
 

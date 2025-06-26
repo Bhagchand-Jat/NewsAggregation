@@ -10,7 +10,7 @@ public class NotificationMapper {
         NotificationDTO dto = new NotificationDTO();
         dto.setNotificationId(notification.getNotificationId());
         dto.setMessage(notification.getMessage());
-        dto.setRead(notification.isRead());
+        dto.setViewed(notification.isViewed());
         dto.setCreatedAt(notification.getCreatedAt());
         dto.setReadAt(notification.getReadAt());
         if (notification.getUser() != null) {
@@ -23,7 +23,7 @@ public class NotificationMapper {
         Notification notification = new Notification();
         notification.setNotificationId(dto.getNotificationId());
         notification.setMessage(dto.getMessage());
-        notification.setRead(dto.isRead());
+        notification.setViewed(dto.isViewed());
         notification.setCreatedAt(dto.getCreatedAt());
         notification.setReadAt(dto.getReadAt());
         if (dto.getUserId() != null) {

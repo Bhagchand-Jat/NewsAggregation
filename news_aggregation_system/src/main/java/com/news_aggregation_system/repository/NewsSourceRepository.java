@@ -11,10 +11,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface NewsSourceRepository extends JpaRepository<NewsSource, Long> {
-  List<NewsSource> findByEnabledTrue();
+    List<NewsSource> findByEnabledTrue();
 
-  @Modifying
-  @Transactional
-  @Query("UPDATE NewsSource n SET n.lastAccessed = :timestamp WHERE n.id = :id")
-  void updateLastAccessed(@Param("id") Long id, @Param("timestamp") LocalDateTime timestamp);
+    @Modifying
+    @Transactional
+    @Query("UPDATE NewsSource n SET n.lastAccessed = :timestamp WHERE n.sourceId = :id")
+    void updateLastAccessed(@Param("id") Long id, @Param("timestamp") LocalDateTime timestamp);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE NewsSource n SET n.sourceApiKey = :sourceApiKey WHERE n.sourceId = :id")
+    int updateSourceApiKey(@Param("id") Long id, @Param("sourceApiKey") String sourceApiKey);
 }

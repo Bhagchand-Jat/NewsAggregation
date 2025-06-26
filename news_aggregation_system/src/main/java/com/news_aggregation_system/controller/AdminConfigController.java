@@ -1,6 +1,5 @@
 package com.news_aggregation_system.controller;
 
-import com.news_aggregation_system.model.SystemConfig;
 import com.news_aggregation_system.response.ApiResponse;
 import com.news_aggregation_system.service.admin.SystemConfigService;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +15,10 @@ public class AdminConfigController {
         this.configService = configService;
     }
 
-    @PutMapping("/threshold")
-    public ResponseEntity<ApiResponse<Integer>> updateThreshold(@RequestParam int value) {
-        SystemConfig updated = configService.updateThreshold(value);
-        return ResponseEntity.ok(ApiResponse.ok("Threshold updated", updated.getReportThreshold()));
+    @PatchMapping("/{id}/threshold")
+    public ResponseEntity<ApiResponse<Integer>> updateThreshold(@PathVariable("id") Long id, @RequestParam int newsThreshold) {
+        configService.updateThreshold(id, newsThreshold);
+        return ResponseEntity.ok(ApiResponse.ok("Threshold updated", newsThreshold));
     }
 
     @GetMapping("/threshold")

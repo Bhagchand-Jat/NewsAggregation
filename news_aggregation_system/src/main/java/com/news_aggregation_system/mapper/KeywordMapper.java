@@ -10,6 +10,7 @@ public class KeywordMapper {
         KeywordDTO dto = new KeywordDTO();
         dto.setKeywordId(keyword.getKeywordId());
         dto.setName(keyword.getName());
+        dto.setEnabled(keyword.isEnabled());
         if (keyword.getUser() != null) {
             dto.setUserId(keyword.getUser().getUserId());
         }
@@ -19,6 +20,7 @@ public class KeywordMapper {
 
     public static Keyword toEntity(KeywordDTO dto) {
         Keyword keyword = new Keyword();
+        keyword.setEnabled(dto.isEnabled());
         keyword.setName(dto.getName());
         if (dto.getUserId() != null) {
             User user = new User();

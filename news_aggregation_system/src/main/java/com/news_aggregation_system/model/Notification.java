@@ -16,10 +16,11 @@ public class Notification {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String message;
 
     @Column(nullable = false)
-    private boolean read = false;
+    private boolean viewed = false;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date readAt;
@@ -56,12 +57,12 @@ public class Notification {
         this.message = message;
     }
 
-    public boolean isRead() {
-        return read;
+    public boolean isViewed() {
+        return viewed;
     }
 
-    public void setRead(boolean read) {
-        this.read = read;
+    public void setViewed(boolean viewed) {
+        this.viewed = viewed;
     }
 
     public Date getCreatedAt() {

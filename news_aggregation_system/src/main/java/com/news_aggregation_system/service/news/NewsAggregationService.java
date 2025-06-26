@@ -1,10 +1,12 @@
 package com.news_aggregation_system.service.news;
 
 import com.news_aggregation_system.dto.ArticleDTO;
+import com.news_aggregation_system.dto.ArticleReportDTO;
 import com.news_aggregation_system.service.BaseService;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface NewsAggregationService extends BaseService<ArticleDTO, Long> {
 
@@ -22,7 +24,11 @@ public interface NewsAggregationService extends BaseService<ArticleDTO, Long> {
 
     List<ArticleDTO> getArticlesSortedByLikesAndDislikes();
 
-    void hideArticle(Long articleId);
-    void unHideArticle(Long articleId);
+    void updateArticleStatusById(Long articleId, boolean enabled);
+
     void reportArticle(Long articleId, Long userId, String reason);
+
+    List<ArticleReportDTO> getAllArticleReportsByArticleId(Long articleId);
+
+    Optional<ArticleReportDTO> getArticleReportByArticleIdAndUserId(Long articleId, Long userId);
 }

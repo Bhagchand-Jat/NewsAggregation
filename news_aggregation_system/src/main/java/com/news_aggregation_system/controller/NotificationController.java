@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/notifications")
+@RequestMapping("/api/user/{userId}/notifications")
 public class NotificationController {
     private final NotificationService notificationService;
 
@@ -17,13 +17,14 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-    @PutMapping("/user/{userId}")
-    public ResponseEntity<ApiResponse<List<NotificationDTO>>> list(
-            @PathVariable Long userId,
-            @RequestParam(defaultValue = "false") boolean read) {
+    @PatchMapping
+    public ResponseEntity<ApiResponse<List<NotificationDTO>>> getNotifications(
+            @PathVariable("userId") Long userId,
+            @RequestParam(defaultValue = "false", value = "isViewed") boolean isViewed) {
 
         return ResponseEntity.ok(ApiResponse.ok(
                 "Fetched notifications",
-                notificationService.getNotificationsByUserIdAndReadStatusAndUpdateMarkAsRead(userId, read)));
+                notificationService.getNotificationsByUserIdAndReadStatusAndUpdateMarkAsRead(userId, isViewed)));
     }
+
 }

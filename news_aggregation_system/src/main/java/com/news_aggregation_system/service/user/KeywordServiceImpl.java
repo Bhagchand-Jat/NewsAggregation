@@ -7,11 +7,10 @@ import com.news_aggregation_system.model.Keyword;
 import com.news_aggregation_system.model.User;
 import com.news_aggregation_system.repository.KeywordRepository;
 import com.news_aggregation_system.repository.UserRepository;
-
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Transactional
 @Service
@@ -39,11 +38,12 @@ public class KeywordServiceImpl implements KeywordService {
 
     @Override
     public void deleteKeywordByIdAndUserId(Long keywordId, Long userId) {
-        Keyword keyword = keywordRepository.findByKeywordIdAndUser_UserId(keywordId, userId)
-                .orElseThrow(() -> new NotFoundException("Keyword", "userId" + userId));
 
-        keywordRepository.delete(keyword);
-        keywordRepository.deleteById(keywordId);
+        int deleted = keywordRepository.deleteKeywordByKeywordIdAndUserUserId(keywordId, userId);
+        if (deleted < 1) {
+            throw new NotFoundException("Keyword", "userId" + userId);
+        }
+
     }
 
 
@@ -56,10 +56,11 @@ public class KeywordServiceImpl implements KeywordService {
 
 
     @Override
-    public KeywordDTO updateKeyword(KeywordDTO keywordDTO) {
-        Keyword keyword = keywordRepository.findById(keywordDTO.getKeywordId()).orElseThrow(() -> new NotFoundException("Keyword", "id: " + keywordDTO.getKeywordId()));
-        keyword.setName(keywordDTO.getName());
-        return KeywordMapper.toDto(keywordRepository.save(keyword));
+    public void updateKeywordStatus(Long keywordId, boolean enabled) {
+        int updated = keywordRepository.updateEnabledByKeywordId(keywordId, enabled);
+        if (updated < 1) {
+            throw new NotFoundException("Keyword", "id: " + keywordId);
+        }
     }
 
 

@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class TheNewsApiConverter implements ExternalArticleConverter {
-    private final Logger logger = LoggerFactory.getLogger(TheNewsApiConverter.class);
     private static final String IDENTIFIER = "thenewsapi.com";
+    private final Logger logger = LoggerFactory.getLogger(TheNewsApiConverter.class);
     private final ObjectMapper MAPPER = new ObjectMapper();
 
 
@@ -35,9 +35,27 @@ public class TheNewsApiConverter implements ExternalArticleConverter {
     }
 
     @Override
+    public String buildUrl(String baseUrl, String apiKey) {
+
+
+        StringBuilder urlBuilder = new StringBuilder(baseUrl);
+
+        if (baseUrl.contains("?")) {
+            urlBuilder.append("&");
+        } else {
+            urlBuilder.append("?");
+        }
+
+        urlBuilder
+                .append("api_token=").append(apiKey);
+
+        return urlBuilder.toString();
+    }
+
+    @Override
     public List<ArticleDTO> convert(String json) throws Exception {
+        logger.info(IDENTIFIER);
         var root = MAPPER.readTree(json);
-        logger.info(IDENTIFIER + "{}", root);
         List<TheNewsApiArticle> articles = MAPPER.convertValue(
                 root.get("data"),
                 new TypeReference<>() {

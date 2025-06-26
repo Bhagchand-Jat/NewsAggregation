@@ -13,6 +13,8 @@ public class Keyword {
     @Column(nullable = false, unique = true)
     private String name;
 
+    private boolean enabled = true;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -44,5 +46,12 @@ public class Keyword {
         this.user = user;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }
 
