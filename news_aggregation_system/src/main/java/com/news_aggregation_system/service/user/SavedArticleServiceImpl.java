@@ -2,6 +2,7 @@ package com.news_aggregation_system.service.user;
 
 import com.news_aggregation_system.dto.ArticleDTO;
 import com.news_aggregation_system.dto.SavedArticleDTO;
+import com.news_aggregation_system.exception.AlreadyExistsException;
 import com.news_aggregation_system.exception.NotFoundException;
 import com.news_aggregation_system.mapper.ArticleMapper;
 import com.news_aggregation_system.mapper.SavedArticleMapper;
@@ -42,14 +43,17 @@ public class SavedArticleServiceImpl implements SavedArticleService {
     }
 
     @Override
-    public void saveArticle(Long userId, Long articleId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User", "id: " + userId));
+    public void saveArticle(SavedArticleDTO savedArticleDTO) {
+        User user = userRepository.findById(savedArticleDTO.getUserId())
+                .orElseThrow(() -> new NotFoundException("User", "id: " + savedArticleDTO.getUserId()));
 
-        Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new NotFoundException("Article", "id: " + articleId));
-
-        SavedArticle saved = SavedArticleMapper.toEntity(new SavedArticleDTO(), user, article);
+        Article article = articleRepository.findById(savedArticleDTO.getArticleId())
+                .orElseThrow(() -> new NotFoundException("Article", "id: " + savedArticleDTO.getArticleId()));
+        boolean isAlreadyExist = savedArticleRepository.existsSavedArticleByArticleArticleIdAndUserUserId(savedArticleDTO.getArticleId(), savedArticleDTO.getUserId());
+        if (isAlreadyExist) {
+            throw new AlreadyExistsException("Article already saved for this user.");
+        }
+        SavedArticle saved = SavedArticleMapper.toEntity(savedArticleDTO, user, article);
         saved.setId(new SavedArticleId(user.getUserId(), article.getArticleId()));
 
         SavedArticleMapper.toDTO(savedArticleRepository.save(saved));

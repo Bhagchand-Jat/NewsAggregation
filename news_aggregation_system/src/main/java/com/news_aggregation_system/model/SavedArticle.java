@@ -20,7 +20,7 @@ public class SavedArticle {
     @MapsId("articleId")
     private Article article;
 
-    private LocalDateTime savedAt;
+    private LocalDateTime savedAt = LocalDateTime.now();
 
     public SavedArticleId getId() {
         return id;

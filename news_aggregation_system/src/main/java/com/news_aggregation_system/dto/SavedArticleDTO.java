@@ -1,11 +1,16 @@
 package com.news_aggregation_system.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
 public class SavedArticleDTO {
+    @NotNull(message = "UserId is required")
     private Long userId;
+    @NotNull(message = "ArticleId is required")
     private Long articleId;
-    private LocalDateTime savedAt;
+
+    private LocalDateTime savedAt = LocalDateTime.now();
 
     public Long getUserId() {
         return userId;

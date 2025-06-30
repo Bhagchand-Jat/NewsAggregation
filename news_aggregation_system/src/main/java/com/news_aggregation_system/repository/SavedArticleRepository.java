@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface SavedArticleRepository extends JpaRepository<SavedArticle, SavedArticleId> {
     List<SavedArticle> findByUserUserId(Long userId);
+
+    boolean existsSavedArticleByArticleArticleIdAndUserUserId(Long articleId, Long userId);
 }

@@ -3,6 +3,7 @@ package com.news_aggregation_system.controller;
 import com.news_aggregation_system.dto.ArticleReactionDTO;
 import com.news_aggregation_system.response.ApiResponse;
 import com.news_aggregation_system.service.user.ArticleReactionService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,16 +22,16 @@ public class ArticleReactionController {
     }
 
     @PostMapping("/like")
-    public ResponseEntity<ApiResponse<ArticleReactionDTO>> like(@RequestBody ArticleReactionDTO dto) {
+    public ResponseEntity<ApiResponse<ArticleReactionDTO>> like(@Valid @RequestBody ArticleReactionDTO dto) {
         dto.setReactionType("LIKE");
-        return ResponseEntity.ok(ApiResponse.ok("Article liked",
+        return ResponseEntity.ok(ApiResponse.ok("Article liked successfully",
                 articleReactionService.reactToArticle(dto)));
     }
 
     @PostMapping("/dislike")
-    public ResponseEntity<ApiResponse<ArticleReactionDTO>> dislike(@RequestBody ArticleReactionDTO dto) {
+    public ResponseEntity<ApiResponse<ArticleReactionDTO>> dislike(@Valid @RequestBody ArticleReactionDTO dto) {
         dto.setReactionType("DISLIKE");
-        return ResponseEntity.ok(ApiResponse.ok("Article disliked",
+        return ResponseEntity.ok(ApiResponse.ok("Article disliked successfully",
                 articleReactionService.reactToArticle(dto)));
     }
 }

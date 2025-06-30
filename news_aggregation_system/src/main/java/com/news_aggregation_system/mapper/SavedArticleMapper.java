@@ -17,6 +17,7 @@ public class SavedArticleMapper {
 
     public static SavedArticle toEntity(SavedArticleDTO dto, User user, Article article) {
         SavedArticle entity = new SavedArticle();
+        dto.setUserId(user.getUserId());
         entity.setUser(user);
         entity.setArticle(article);
         entity.setSavedAt(dto.getSavedAt());

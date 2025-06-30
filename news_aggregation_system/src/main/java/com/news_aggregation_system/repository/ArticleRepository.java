@@ -45,4 +45,28 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("UPDATE Article a SET a.enabled = :enabled WHERE a.articleId = :articleId")
     int updateArticleStatusById(@Param("articleId") Long articleId, @Param("enabled") boolean enabled);
 
+    @Query("""
+            SELECT a
+            FROM Article a
+                 JOIN a.categories c
+            WHERE c.categoryId = :categoryId
+              AND a.enabled = true
+            ORDER BY a.likeCount DESC, a.dislikeCount ASC
+            """)
+    List<Article> getArticlesByCategoryId(@Param("categoryId") Long categoryId);
+
+    @Query("""
+                SELECT a
+                FROM Article a
+                     JOIN a.categories c
+                WHERE c.categoryId = :categoryId
+                  AND a.publishedAt BETWEEN :from AND :to
+                  AND a.enabled = true
+                ORDER BY a.likeCount DESC, a.dislikeCount ASC
+            """)
+    List<Article> getArticlesByDateRangeAndCategory(@Param("from") Date from,
+                                                    @Param("to") Date to,
+                                                    @Param("categoryId") Long categoryId);
+
+
 }

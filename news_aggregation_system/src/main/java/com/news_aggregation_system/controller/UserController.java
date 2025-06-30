@@ -1,8 +1,6 @@
 package com.news_aggregation_system.controller;
 
-import com.news_aggregation_system.dto.ArticleDTO;
-import com.news_aggregation_system.dto.CategoryDTO;
-import com.news_aggregation_system.dto.UserDTO;
+import com.news_aggregation_system.dto.*;
 import com.news_aggregation_system.response.ApiResponse;
 import com.news_aggregation_system.service.admin.CategoryService;
 import com.news_aggregation_system.service.news.NewsAggregationService;
@@ -30,16 +28,16 @@ public class UserController {
         this.newsAggregationService = newsAggregationService;
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<UserDTO>> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
-        UserDTO updatedUser = userService.update(id, userDTO);
+    @PutMapping("/{userId}")
+    public ResponseEntity<ApiResponse<UserDTO>> updateUser(@PathVariable Long userId, @Valid @RequestBody UserDTO userDTO) {
+        UserDTO updatedUser = userService.update(userId, userDTO);
         ApiResponse<UserDTO> response = new ApiResponse<>("User updated successfully", true, updatedUser);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<UserDTO>> getUserById(@PathVariable Long id) {
-        UserDTO user = userService.getById(id);
+    @GetMapping("/{userId}")
+    public ResponseEntity<ApiResponse<UserDTO>> getUserById(@PathVariable Long userId) {
+        UserDTO user = userService.getById(userId);
         ApiResponse<UserDTO> response = new ApiResponse<>("User fetched successfully", true, user);
         return ResponseEntity.ok(response);
     }
@@ -51,9 +49,9 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
-        userService.delete(id);
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long userId) {
+        userService.delete(userId);
         ApiResponse<Void> response = new ApiResponse<>("User deleted successfully", true, null);
         return ResponseEntity.ok(response);
     }
@@ -64,12 +62,18 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.ok("Fetched saved articles", saved));
     }
 
-    @PostMapping("/{userId}/save-article/{articleId}")
-    public ResponseEntity<ApiResponse<Void>> saveArticle(
+    @PostMapping("/save-article")
+    public ResponseEntity<ApiResponse<Void>> saveArticle(@Valid @RequestBody SavedArticleDTO savedArticleDTO) {
+        savedArticleService.saveArticle(savedArticleDTO);
+        return ResponseEntity.ok(ApiResponse.ok("Article saved successfully"));
+    }
+
+    @DeleteMapping("/{userId}/saved-article/{articleId}")
+    public ResponseEntity<ApiResponse<Void>> deleteSavedArticle(
             @PathVariable Long userId,
             @PathVariable Long articleId) {
-        savedArticleService.saveArticle(userId, articleId);
-        return ResponseEntity.ok(ApiResponse.ok("Article saved successfully"));
+        savedArticleService.deleteSavedArticle(userId, articleId);
+        return ResponseEntity.ok(ApiResponse.ok("Saved Article Deleted successfully"));
     }
 
     @GetMapping("/categories/enabled")
@@ -77,10 +81,16 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.ok(categoryService.getEnabledCategories()));
     }
 
-    @PostMapping("/articles/{articleId}/report")
-    public ResponseEntity<ApiResponse<Void>> reportArticle(@PathVariable Long articleId, @RequestParam Long userId, @RequestParam String reason) {
-        newsAggregationService.reportArticle(articleId, userId, reason);
+    @PostMapping("/report-article")
+    public ResponseEntity<ApiResponse<Void>> reportArticle(@RequestBody @Valid ArticleReportDTO articleReportDTO) {
+        newsAggregationService.reportArticle(articleReportDTO);
         return ResponseEntity.ok(ApiResponse.ok("Article reported successfully"));
+    }
+
+    @GetMapping("/{userId}/articles-reports")
+    public ResponseEntity<ApiResponse<List<ArticleReportDTO>>> getArticlesReports(@PathVariable Long userId) {
+
+        return ResponseEntity.ok(ApiResponse.ok(newsAggregationService.getAllArticlesReportsByUserId(userId)));
     }
 
 }

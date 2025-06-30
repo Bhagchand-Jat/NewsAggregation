@@ -1,6 +1,7 @@
 package com.news_aggregation_system.controller;
 
 import com.news_aggregation_system.dto.ArticleDTO;
+import com.news_aggregation_system.dto.ArticleFilterRequestDTO;
 import com.news_aggregation_system.response.ApiResponse;
 import com.news_aggregation_system.service.news.NewsAggregationService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,9 +26,14 @@ public class NewsController {
         return ResponseEntity.ok(ApiResponse.ok(newsService.getAll()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ArticleDTO>> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.ok(newsService.getById(id)));
+    @PostMapping("/filter")
+    public ResponseEntity<ApiResponse<List<ArticleDTO>>> filterArticles(@RequestBody ArticleFilterRequestDTO articleFilterRequestDTO) {
+        return ResponseEntity.ok(ApiResponse.ok(newsService.filterArticles(articleFilterRequestDTO)));
+    }
+
+    @GetMapping("/{articleId}")
+    public ResponseEntity<ApiResponse<ArticleDTO>> getByArticleId(@PathVariable Long articleId) {
+        return ResponseEntity.ok(ApiResponse.ok(newsService.getById(articleId)));
     }
 
     @GetMapping("/search")
@@ -43,7 +49,7 @@ public class NewsController {
 
     @GetMapping("/date")
     public ResponseEntity<ApiResponse<List<ArticleDTO>>> getByDate(
-            @RequestParam(value = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date) {
+            @RequestParam(value = "date") @DateTimeFormat(pattern = "dd-MM-yyyy") Date date) {
         List<ArticleDTO> articles = newsService.getArticlesByDate(date);
         return ResponseEntity.ok(ApiResponse.ok("Articles on date sorted by reactions", articles));
     }

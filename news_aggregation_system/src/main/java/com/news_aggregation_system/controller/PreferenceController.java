@@ -5,6 +5,7 @@ import com.news_aggregation_system.dto.KeywordDTO;
 import com.news_aggregation_system.response.ApiResponse;
 import com.news_aggregation_system.service.user.CategoryPreferenceService;
 import com.news_aggregation_system.service.user.KeywordService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +43,7 @@ public class PreferenceController {
 
     @PostMapping("/keywords")
     public ResponseEntity<ApiResponse<KeywordDTO>> addKeyword(
-            @PathVariable Long userId, @RequestBody KeywordDTO dto) {
+            @PathVariable Long userId, @Valid @RequestBody KeywordDTO dto) {
         KeywordDTO keywordDTO = keywordService.creteKeyword(userId, dto);
         return ResponseEntity.ok(new ApiResponse<>("Keyword Added successfully", true, keywordDTO));
     }
@@ -51,7 +52,7 @@ public class PreferenceController {
     public ResponseEntity<ApiResponse<Void>> deleteKeyword(
             @PathVariable Long userId, @PathVariable Long keywordId) {
         keywordService.deleteKeywordByIdAndUserId(userId, keywordId);
-        return ResponseEntity.ok(ApiResponse.ok("Keyword deleted"));
+        return ResponseEntity.ok(ApiResponse.ok("Keyword deleted Successfully"));
     }
 
     @GetMapping("/categories")

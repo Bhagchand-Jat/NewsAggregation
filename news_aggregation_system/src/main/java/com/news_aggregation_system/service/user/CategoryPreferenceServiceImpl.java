@@ -1,10 +1,8 @@
 package com.news_aggregation_system.service.user;
 
 import com.news_aggregation_system.dto.CategoryStatusDTO;
-import com.news_aggregation_system.dto.UserCategoryPreferenceDTO;
 import com.news_aggregation_system.exception.AlreadyExistsException;
 import com.news_aggregation_system.exception.NotFoundException;
-import com.news_aggregation_system.mapper.UserCategoryPreferenceMapper;
 import com.news_aggregation_system.model.Category;
 import com.news_aggregation_system.model.User;
 import com.news_aggregation_system.model.UserCategoryPreference;
@@ -35,14 +33,14 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
     }
 
     @Override
-    public UserCategoryPreferenceDTO createPreference(Long userId, Long categoryId, boolean enabled) {
+    public void createPreference(Long userId, Long categoryId, boolean enabled) {
 
         userCategoryPreferenceRepository.findByUserUserIdAndCategoryCategoryId(userId, categoryId).ifPresent(pref -> {
             throw new AlreadyExistsException(
                     "CategoryPreference", "userId=" + userId + ", categoryId=" + categoryId);
         });
 
-        return UserCategoryPreferenceMapper.toDto(createUserCategoryPreference(userId, categoryId));
+        createUserCategoryPreference(userId, categoryId);
     }
 
     @Override
@@ -92,14 +90,14 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
                 .orElseThrow(() -> new NotFoundException("Category", "id=" + id));
     }
 
-    private UserCategoryPreference createUserCategoryPreference(Long userId, Long categoryId) {
+    private void createUserCategoryPreference(Long userId, Long categoryId) {
         User user = fetchUser(userId);
         Category category = fetchCategory(categoryId);
         UserCategoryPreference preference = new UserCategoryPreference();
         preference.setUser(user);
         preference.setCategory(category);
         preference.setEnabled(true);
-        return userCategoryPreferenceRepository.save(preference);
+        userCategoryPreferenceRepository.save(preference);
     }
 
     @Override

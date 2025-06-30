@@ -12,9 +12,11 @@ public interface ArticleReportRepository extends JpaRepository<ArticleReport, Lo
 
     long countByArticleArticleId(Long articleArticleId);
 
-    List<ArticleReport> findArticleReportByArticleArticleId(Long articleArticleId);
+    List<ArticleReport> findArticleReportByArticleArticleId(Long articleId);
 
 
     Optional<ArticleReport> findArticleReportByArticleArticleIdAndReportedByUserId(Long articleId, Long userId);
+
+    List<ArticleReport> findArticleReportByReportedByUserId(Long userId);
 }
 

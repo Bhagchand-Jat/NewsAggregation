@@ -1,6 +1,7 @@
 package com.news_aggregation_system.service.news;
 
 import com.news_aggregation_system.dto.ArticleDTO;
+import com.news_aggregation_system.dto.ArticleFilterRequestDTO;
 import com.news_aggregation_system.dto.ArticleReportDTO;
 import com.news_aggregation_system.dto.NewsSourceDTO;
 import com.news_aggregation_system.exception.AlreadyExistsException;
@@ -129,13 +130,14 @@ public class NewsAggregationServiceImpl implements NewsAggregationService {
 
 
     @Override
-    public void reportArticle(Long articleId, Long userId, String reason) {
+    public void reportArticle(ArticleReportDTO articleReportDTO) {
+        Long articleId = articleReportDTO.getArticleId();
+        Long userId = articleReportDTO.getUserId();
 
         if (articleReportRepository.existsByArticleArticleIdAndReportedByUserId(articleId, userId)) {
-            throw new AlreadyExistsException("Article Report", "id");
+            throw new AlreadyExistsException("Article already Reported By User");
         }
 
-        ArticleReportDTO articleReportDTO = new ArticleReportDTO(articleId, userId, reason);
         articleReportRepository.save(ArticleReportMapper.toEntity(articleReportDTO));
 
         long count = articleReportRepository.countByArticleArticleId(articleId);
@@ -156,6 +158,66 @@ public class NewsAggregationServiceImpl implements NewsAggregationService {
     @Override
     public Optional<ArticleReportDTO> getArticleReportByArticleIdAndUserId(Long articleId, Long userId) {
         return Optional.ofNullable(articleReportRepository.findArticleReportByArticleArticleIdAndReportedByUserId(articleId, userId).map(ArticleReportMapper::toDTO).orElseThrow(() -> new NotFoundException("Article Report", "id: " + articleId)));
+    }
+
+    @Override
+    public List<ArticleReportDTO> getAllArticlesReportsByUserId(Long userId) {
+        return articleReportRepository.findArticleReportByReportedByUserId(userId).stream().map(ArticleReportMapper::toDTO).toList();
+    }
+
+    @Override
+    public List<ArticleDTO> filterArticles(ArticleFilterRequestDTO filterRequestDTO) {
+
+        validateRangeCompleteness(filterRequestDTO);
+        validateExclusiveFilters(filterRequestDTO);
+
+        if (hasText(filterRequestDTO.getKeyword())) return searchArticlesByKeyword(filterRequestDTO.getKeyword());
+        if (filterRequestDTO.getDate() != null) return getArticlesByDate(filterRequestDTO.getDate());
+        if (isRangeWithCategory(filterRequestDTO))
+            return articleRepository.getArticlesByDateRangeAndCategory(filterRequestDTO.getFrom(), filterRequestDTO.getTo(), filterRequestDTO.getCategoryId()).stream().map(ArticleMapper::toDto).toList();
+        if (isRange(filterRequestDTO))
+            return getArticlesByDateRange(filterRequestDTO.getFrom(), filterRequestDTO.getTo());
+        if (filterRequestDTO.getCategoryId() != null)
+            return articleRepository.getArticlesByCategoryId(filterRequestDTO.getCategoryId()).stream().map(ArticleMapper::toDto).toList();
+
+        return getAll();
+    }
+
+    private void validateRangeCompleteness(ArticleFilterRequestDTO filterRequestDTO) {
+        boolean exactlyOneDateBound = (filterRequestDTO.getFrom() != null) ^ (filterRequestDTO.getTo() != null);
+        if (exactlyOneDateBound) {
+            throw new IllegalArgumentException("'from' and 'to' must be provided together");
+        }
+    }
+
+    private void validateExclusiveFilters(ArticleFilterRequestDTO f) {
+        int criteria =
+                boolToInt(hasText(f.getKeyword())) +
+                        boolToInt(f.getDate() != null) +
+                        boolToInt(f.getCategoryId() != null) +
+                        boolToInt(isRange(f));
+
+        if (isRangeWithCategory(f)) criteria = 1;
+
+        if (criteria > 1) {
+            throw new IllegalArgumentException("Provide only one filter, or 'from'+'to' with 'categoryId'");
+        }
+    }
+
+    private boolean isRange(ArticleFilterRequestDTO f) {
+        return f.getFrom() != null && f.getTo() != null;
+    }
+
+    private boolean isRangeWithCategory(ArticleFilterRequestDTO f) {
+        return isRange(f) && f.getCategoryId() != null;
+    }
+
+    private boolean hasText(String s) {
+        return s != null && !s.isBlank();
+    }
+
+    private int boolToInt(boolean value) {
+        return value ? 1 : 0;
     }
 
 

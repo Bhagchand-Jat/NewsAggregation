@@ -9,10 +9,10 @@ public class ArticleReportDTO {
 
     private Long id;
 
-    @NotNull(message = "ArticleId should not be blank")
+    @NotNull
     private Long articleId;
 
-    @NotNull(message = "userId should not be blank")
+    @NotNull
     private Long userId;
 
     @NotBlank(message = "reason is required")
@@ -23,6 +23,12 @@ public class ArticleReportDTO {
 
     public ArticleReportDTO() {
 
+    }
+
+    public ArticleReportDTO(Long articleId, Long userId, String reason) {
+        this.articleId = articleId;
+        this.userId = userId;
+        this.reason = reason;
     }
 
     public Long getId() {

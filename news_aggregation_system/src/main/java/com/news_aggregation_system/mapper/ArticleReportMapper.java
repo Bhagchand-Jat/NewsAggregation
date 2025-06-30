@@ -9,6 +9,7 @@ public class ArticleReportMapper {
     public static ArticleReport toEntity(ArticleReportDTO articleReportDTO) {
         ArticleReport articleReport = new ArticleReport();
         articleReport.setId(articleReportDTO.getId());
+        articleReport.setReason(articleReportDTO.getReason());
         User user = new User();
         user.setUserId(articleReportDTO.getUserId());
         articleReport.setReportedBy(user);
@@ -22,6 +23,7 @@ public class ArticleReportMapper {
     public static ArticleReportDTO toDTO(ArticleReport articleReport) {
         ArticleReportDTO articleReportDTO = new ArticleReportDTO();
         articleReportDTO.setId(articleReport.getId());
+        articleReportDTO.setReason(articleReport.getReason());
         articleReportDTO.setArticleId(articleReport.getArticle().getArticleId());
         articleReportDTO.setArticleId(articleReport.getArticle().getArticleId());
         articleReportDTO.setUserId(articleReport.getReportedBy().getUserId());

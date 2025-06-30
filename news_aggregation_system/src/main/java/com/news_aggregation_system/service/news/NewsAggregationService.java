@@ -1,6 +1,7 @@
 package com.news_aggregation_system.service.news;
 
 import com.news_aggregation_system.dto.ArticleDTO;
+import com.news_aggregation_system.dto.ArticleFilterRequestDTO;
 import com.news_aggregation_system.dto.ArticleReportDTO;
 import com.news_aggregation_system.service.BaseService;
 
@@ -26,9 +27,13 @@ public interface NewsAggregationService extends BaseService<ArticleDTO, Long> {
 
     void updateArticleStatusById(Long articleId, boolean enabled);
 
-    void reportArticle(Long articleId, Long userId, String reason);
+    void reportArticle(ArticleReportDTO articleReportDTO);
 
     List<ArticleReportDTO> getAllArticleReportsByArticleId(Long articleId);
 
     Optional<ArticleReportDTO> getArticleReportByArticleIdAndUserId(Long articleId, Long userId);
+
+    List<ArticleReportDTO> getAllArticlesReportsByUserId(Long userId);
+
+    List<ArticleDTO> filterArticles(ArticleFilterRequestDTO articleFilterRequestDTO);
 }
