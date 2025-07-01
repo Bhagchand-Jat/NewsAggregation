@@ -2,7 +2,6 @@ package com.news_aggregation_system.mapper;
 
 import com.news_aggregation_system.dto.CategoryDTO;
 import com.news_aggregation_system.model.Category;
-import com.news_aggregation_system.model.User;
 
 public class CategoryMapper {
 
@@ -11,9 +10,11 @@ public class CategoryMapper {
         dto.setCategoryId(category.getCategoryId());
         dto.setName(category.getName());
         dto.setEnabled(category.isEnabled());
-        if (category.getUser() != null) {
-            dto.setUserId(category.getUser().getUserId());
+        if (category.getKeywords() != null) {
+            dto.setKeywords(category.getKeywords());
         }
+
+
         return dto;
     }
 
@@ -21,11 +22,7 @@ public class CategoryMapper {
         Category category = new Category();
         category.setName(dto.getName());
         category.setEnabled(dto.isEnabled());
-        if (dto.getUserId() != null) {
-            User user = new User();
-            user.setUserId(dto.getUserId());
-            category.setUser(user);
-        }
+        category.setKeywords(dto.getKeywords());
 
         return category;
     }
