@@ -79,16 +79,14 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
 
     @Override
     public List<CategoryStatusDTO> getEnabledCategoriesStatus(Long userId) {
-        Set<Long> enabledCategoryIds = userCategoryPreferenceRepository.findByUserUserIdAndEnabledTrue(
-                userId
-        ).stream().map(preference -> preference.getCategory().getCategoryId()).collect(Collectors.toSet());
 
-        return categoryRepository.findByEnabledTrue().stream()
-                .map(category -> new CategoryStatusDTO(
-                        category.getCategoryId(),
-                        category.getName(),
-                        enabledCategoryIds.contains(category.getCategoryId())))
-                .toList();
+        return userCategoryPreferenceRepository.findByUserUserIdAndEnabledTrueAndCategoryEnabledTrue(
+                userId
+        ).stream().map(preference -> new CategoryStatusDTO(
+                preference.getCategory().getCategoryId(),
+                preference.getCategory().getName(),
+                preference.isEnabled())).toList();
+
     }
 
     @Override
