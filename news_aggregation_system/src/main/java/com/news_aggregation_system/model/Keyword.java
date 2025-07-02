@@ -3,7 +3,9 @@ package com.news_aggregation_system.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "keywords")
+@Table(name = "keywords",
+        uniqueConstraints = @UniqueConstraint(
+                columnNames = {"category_id", "name"}))
 public class Keyword {
 
     @Id
@@ -16,8 +18,9 @@ public class Keyword {
     private boolean enabled = true;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "categoryId")
+    private Category category;
+
 
     public Keyword() {
     }
@@ -38,20 +41,20 @@ public class Keyword {
         this.name = name;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public boolean isEnabled() {
         return enabled;
     }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }
 
