@@ -5,6 +5,7 @@ import com.news_aggregation_system.exception.NotFoundException;
 import com.news_aggregation_system.mapper.NewsSourceMapper;
 import com.news_aggregation_system.model.NewsSource;
 import com.news_aggregation_system.repository.NewsSourceRepository;
+import com.news_aggregation_system.service.common.Constant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +13,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Transactional
+import static com.news_aggregation_system.service.common.Constant.NEWS_SOURCE;
+
 @Service
 public class NewsSourceServiceImpl implements NewsSourceService {
 
@@ -22,6 +24,7 @@ public class NewsSourceServiceImpl implements NewsSourceService {
         this.newsSourceRepository = newsSourceRepository;
     }
 
+    @Transactional
     @Override
     public NewsSourceDTO create(NewsSourceDTO newsSourceDTO) {
         NewsSource entity = NewsSourceMapper.toEntity(newsSourceDTO);
@@ -29,6 +32,7 @@ public class NewsSourceServiceImpl implements NewsSourceService {
         return NewsSourceMapper.toDto(saved);
     }
 
+    @Transactional
     @Override
     public NewsSourceDTO update(Long id, NewsSourceDTO newsSourceDTO) {
         NewsSource existing = getNewsSourceOrThrow(id);
@@ -50,6 +54,7 @@ public class NewsSourceServiceImpl implements NewsSourceService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
         NewsSource source = getNewsSourceOrThrow(id);
@@ -58,9 +63,10 @@ public class NewsSourceServiceImpl implements NewsSourceService {
 
     private NewsSource getNewsSourceOrThrow(Long id) {
         return newsSourceRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("NewsSource", "id: " + id));
+                .orElseThrow(() -> new NotFoundException(NEWS_SOURCE, Constant.ID + id));
     }
 
+    @Transactional
     @Override
     public List<NewsSourceDTO> getAllByEnabledAndUpdateLastModified() {
         List<NewsSource> newsSources = newsSourceRepository.findByEnabledTrue();
@@ -73,11 +79,12 @@ public class NewsSourceServiceImpl implements NewsSourceService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void updateSourceApiKeyById(Long sourceId, String sourceApiKey) {
         int updated = newsSourceRepository.updateSourceApiKey(sourceId, sourceApiKey);
         if (updated < 1) {
-            throw new NotFoundException("News Source", "id: " + sourceId);
+            throw new NotFoundException(NEWS_SOURCE, Constant.ID + sourceId);
         }
 
     }

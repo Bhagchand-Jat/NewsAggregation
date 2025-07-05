@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.news_aggregation_system.service.common.Constant.INVALID_EMAIL_PASSWORD;
+import static com.news_aggregation_system.service.common.Constant.UNIMPLEMENTED_LOGOUT;
+
 @Transactional
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -34,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> user = userRepository.findByEmail(request.getEmail());
 
         if (user.isEmpty() || !passwordEncoder.matches(request.getPassword(), user.get().getPassword())) {
-            throw new LoginFailedException("Invalid email or password");
+            throw new LoginFailedException(INVALID_EMAIL_PASSWORD);
         }
 
         return UserMapper.toDto(user.get());
@@ -42,6 +45,7 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
+    @Transactional
     @Override
     public UserDTO register(UserDTO user) {
         return userService.create(user);
@@ -49,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void logout(Long userId) {
-        throw new UnsupportedOperationException("Unimplemented method 'logout'");
+        throw new UnsupportedOperationException(UNIMPLEMENTED_LOGOUT);
     }
 
 

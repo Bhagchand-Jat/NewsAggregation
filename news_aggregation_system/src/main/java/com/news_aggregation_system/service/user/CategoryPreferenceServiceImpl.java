@@ -1,8 +1,12 @@
 package com.news_aggregation_system.service.user;
 
 import com.news_aggregation_system.dto.CategoryStatusDTO;
+import com.news_aggregation_system.dto.UserCategoryPreferenceDTO;
+import com.news_aggregation_system.dto.UserKeywordPreferenceDTO;
 import com.news_aggregation_system.exception.AlreadyExistsException;
 import com.news_aggregation_system.exception.NotFoundException;
+import com.news_aggregation_system.mapper.UserCategoryPreferenceMapper;
+import com.news_aggregation_system.mapper.UserKeywordPreferenceMapper;
 import com.news_aggregation_system.model.Category;
 import com.news_aggregation_system.model.User;
 import com.news_aggregation_system.model.UserCategoryPreference;
@@ -18,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.news_aggregation_system.service.common.Constant.*;
 
 @Service
 @Transactional
@@ -37,35 +43,42 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
         this.userCategoryPreferenceRepository = userCategoryPreferenceRepository;
     }
 
+    @Transactional
     @Override
     public void enableCategoryForUser(Long userId, Long categoryId) {
 
         userCategoryPreferenceRepository.findByUserUserIdAndCategoryCategoryId(userId, categoryId).ifPresent(pref -> {
             throw new AlreadyExistsException(
-                    "Category Already Enabled for Notifications");
+                    CATEGORY_ALREADY_ENABLED);
         });
 
         createUserCategoryPreference(userId, categoryId);
     }
 
+    @Transactional
     @Override
     public void disableCategoryForUser(Long userId, Long categoryId) {
 
         int deleted = userCategoryPreferenceRepository.deleteByUserUserIdAndCategoryCategoryId(userId, categoryId);
         if (deleted < 1) {
-            throw new NotFoundException("CategoryPreference Not found with userId: " + userId + " and categoryId: " + categoryId);
+            throw new NotFoundException(CATEGORY_PREFERENCE_NOT_FOUND + userId + AND_CATEGORY_ID + categoryId);
         }
+    }
+
+    @Override
+    public List<UserCategoryPreferenceDTO> getAllEnabledCategoriesPreference(Long userId) {
+        return userCategoryPreferenceRepository.findByUserUserIdAndEnabledTrue(userId).stream().map(UserCategoryPreferenceMapper::toDto).toList();
     }
 
 
     private User fetchUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User", "id=" + id));
+                .orElseThrow(() -> new NotFoundException(USER, ID + id));
     }
 
     private Category fetchCategory(Long id) {
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Category", "id=" + id));
+                .orElseThrow(() -> new NotFoundException(CATEGORY, ID + id));
     }
 
     private void createUserCategoryPreference(Long userId, Long categoryId) {
@@ -98,7 +111,7 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
                 .toList();
     }
 
-
+    @Transactional
     @Override
     public void addKeywordsToCategory(Long userId, Long categoryId, List<String> words) {
         User user = fetchUser(userId);
@@ -131,11 +144,17 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
                 .stream().map(UserKeywordPreference::getKeyword).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void deleteKeywordFromCategory(Long userId, Long categoryId, String keywordName) {
         int delete = userKeywordPreferenceRepository.deleteUserKeywordPreferenceByKeywordAndUserUserIdAndCategoryCategoryId(keywordName, userId, categoryId);
         if (delete < 1) {
-            throw new NotFoundException("Keyword Not found with userId: " + userId + " or categoryId: " + categoryId);
+            throw new NotFoundException(KEYWORD_NOT_FOUND + userId + AND_CATEGORY_ID + categoryId);
         }
+    }
+
+    @Override
+    public List<UserKeywordPreferenceDTO> getAllEnabledKeywordPreferences(Long userId) {
+        return userKeywordPreferenceRepository.findActiveByUserId(userId).stream().map(UserKeywordPreferenceMapper::toDTO).toList();
     }
 }

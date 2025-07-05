@@ -3,6 +3,7 @@ package com.news_aggregation_system.repository;
 import com.news_aggregation_system.model.UserKeywordPreference;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -29,5 +30,16 @@ public interface UserKeywordPreferenceRepository
                 where p.enabled = true and kp.user.userId = :userId and kp.category.categoryId = :categoryId
             """)
     List<UserKeywordPreference> getEnabledKeywordsByUserIdAndCategoryId(Long userId, Long categoryId);
+
+    @Query("""
+                select ukp
+                  from UserKeywordPreference ukp
+                  join Keyword k
+                    on lower(k.name)   = lower(ukp.keyword)
+                   and k.category      = ukp.category
+                 where ukp.user.userId = :userId
+                   and k.enabled       = true
+            """)
+    List<UserKeywordPreference> findActiveByUserId(@Param("userId") Long userId);
 }
 

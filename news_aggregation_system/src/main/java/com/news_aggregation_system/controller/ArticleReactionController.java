@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.news_aggregation_system.service.common.Constant.*;
+
 @RestController
 @RequestMapping("/api/reactions")
 public class ArticleReactionController {
@@ -23,15 +25,15 @@ public class ArticleReactionController {
 
     @PostMapping("/like")
     public ResponseEntity<ApiResponse<ArticleReactionDTO>> like(@Valid @RequestBody ArticleReactionDTO dto) {
-        dto.setReactionType("LIKE");
-        return ResponseEntity.ok(ApiResponse.ok("Article liked successfully",
+        dto.setReactionType(LIKE);
+        return ResponseEntity.ok(ApiResponse.ok(ARTICLE_LIKED_SUCCESS,
                 articleReactionService.reactToArticle(dto)));
     }
 
     @PostMapping("/dislike")
     public ResponseEntity<ApiResponse<ArticleReactionDTO>> dislike(@Valid @RequestBody ArticleReactionDTO dto) {
-        dto.setReactionType("DISLIKE");
-        return ResponseEntity.ok(ApiResponse.ok("Article disliked successfully",
+        dto.setReactionType(DISLIKE);
+        return ResponseEntity.ok(ApiResponse.ok(ARTICLE_DIS_LIKED_SUCCESS,
                 articleReactionService.reactToArticle(dto)));
     }
 }

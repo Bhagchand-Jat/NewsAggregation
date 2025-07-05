@@ -4,8 +4,10 @@ import com.news_aggregation_system.dto.ArticleReadHistoryDTO;
 import com.news_aggregation_system.mapper.ArticleReadHistoryMapper;
 import com.news_aggregation_system.repository.ArticleReadHistoryRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,6 +19,7 @@ public class ArticleReadHistoryServiceImpl implements ArticleReadHistoryService 
         this.articleReadHistoryRepository = articleReadHistoryRepository;
     }
 
+    @Transactional
     @Override
     public void markAsRead(Long userId, Long articleId) {
         boolean isExists = articleReadHistoryRepository.existsByUserUserIdAndArticleArticleId(userId, articleId);
@@ -29,5 +32,10 @@ public class ArticleReadHistoryServiceImpl implements ArticleReadHistoryService 
     @Override
     public List<ArticleReadHistoryDTO> getArticleReadHistory(Long userId) {
         return articleReadHistoryRepository.findByUserUserId(userId).stream().map(ArticleReadHistoryMapper::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Set<Long> getArticleIdsReadByUser(Long userId) {
+        return articleReadHistoryRepository.findArticleIdReadByUser(userId);
     }
 }

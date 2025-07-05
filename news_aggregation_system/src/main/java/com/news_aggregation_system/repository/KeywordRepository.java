@@ -33,4 +33,6 @@ public interface KeywordRepository extends JpaRepository<Keyword, Long> {
                 and lower(k.name) = lower(:keywordName)
             """)
     int updateEnabledByCategoryCategoryIdAndNameContainingIgnoreCase(boolean enabled, Long categoryId, String keywordName);
+
+    List<Keyword> findByEnabledFalse();
 }

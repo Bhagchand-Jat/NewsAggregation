@@ -15,7 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Transactional
+import static com.news_aggregation_system.service.common.Constant.*;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -30,6 +31,7 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
+    @Transactional
     @Override
     public UserDTO create(UserDTO userDTO) {
         validateEmailUniqueness(userDTO.getEmail());
@@ -44,6 +46,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toDto(savedUser);
     }
 
+    @Transactional
     @Override
     public UserDTO update(Long id, UserDTO userDTO) {
         User user = getUserOrThrow(id);
@@ -72,28 +75,29 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new NotFoundException("User", "id: " + id);
+            throw new NotFoundException(USER, ID + id);
         }
         userRepository.deleteById(id);
     }
 
     private void validateEmailUniqueness(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new AlreadyExistsException("User", "Email: " + email);
+            throw new AlreadyExistsException(USER, EMAIL + email);
         }
     }
 
     private User getUserOrThrow(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User", "id: " + id));
+                .orElseThrow(() -> new NotFoundException(USER, ID + id));
     }
 
     private Role getRoleByRoleNameOrThrow() {
         return roleRepository.findByRole(Constant.USER_ROLE)
-                .orElseThrow(() -> new NotFoundException("Role", "name: " + Constant.USER_ROLE));
+                .orElseThrow(() -> new NotFoundException(ROLE, NAME + Constant.USER_ROLE));
     }
 
     private boolean isNotEmpty(String value) {

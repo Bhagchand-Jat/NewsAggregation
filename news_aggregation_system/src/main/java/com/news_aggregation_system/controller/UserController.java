@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.news_aggregation_system.service.common.Constant.*;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -34,41 +36,40 @@ public class UserController {
     @PutMapping("/{userId}")
     public ResponseEntity<ApiResponse<UserDTO>> updateUser(@PathVariable Long userId, @Valid @RequestBody UserDTO userDTO) {
         UserDTO updatedUser = userService.update(userId, userDTO);
-        ApiResponse<UserDTO> response = new ApiResponse<>("User updated successfully", true, updatedUser);
+        ApiResponse<UserDTO> response = new ApiResponse<>(USER_UPDATED_SUCCESS, true, updatedUser);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<UserDTO>> getUserById(@PathVariable Long userId) {
         UserDTO user = userService.getById(userId);
-        ApiResponse<UserDTO> response = new ApiResponse<>("User fetched successfully", true, user);
+        ApiResponse<UserDTO> response = new ApiResponse<>(USER_FETCHED_SUCCESS, true, user);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserDTO>>> getAllUsers() {
-        List<UserDTO> users = userService.getAll();
-        ApiResponse<List<UserDTO>> response = new ApiResponse<>("All users fetched successfully", true, users);
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(ApiResponse.ok(userService.getAll()));
     }
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long userId) {
         userService.delete(userId);
-        ApiResponse<Void> response = new ApiResponse<>("User deleted successfully", true, null);
+        ApiResponse<Void> response = new ApiResponse<>(USER_DELETE_SUCCESS, true, null);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{userId}/saved-articles")
     public ResponseEntity<ApiResponse<List<ArticleDTO>>> getSavedArticles(@PathVariable Long userId) {
         List<ArticleDTO> saved = savedArticleService.getSavedArticlesByUser(userId);
-        return ResponseEntity.ok(ApiResponse.ok("Fetched saved articles", saved));
+        return ResponseEntity.ok(ApiResponse.ok(saved));
     }
 
     @PostMapping("/save-article")
     public ResponseEntity<ApiResponse<Void>> saveArticle(@Valid @RequestBody SavedArticleDTO savedArticleDTO) {
         savedArticleService.saveArticle(savedArticleDTO);
-        return ResponseEntity.ok(ApiResponse.ok("Article saved successfully"));
+        return ResponseEntity.ok(ApiResponse.ok(ARTICLE_SAVED_SUCCESS));
     }
 
     @DeleteMapping("/{userId}/saved-article/{articleId}")
@@ -76,7 +77,7 @@ public class UserController {
             @PathVariable Long userId,
             @PathVariable Long articleId) {
         savedArticleService.deleteSavedArticle(userId, articleId);
-        return ResponseEntity.ok(ApiResponse.ok("Saved Article Deleted successfully"));
+        return ResponseEntity.ok(ApiResponse.ok(SAVED_ARTICLE_DELETE_SUCCESS));
     }
 
     @GetMapping("/categories/enabled")
@@ -87,7 +88,7 @@ public class UserController {
     @PostMapping("/report-article")
     public ResponseEntity<ApiResponse<Void>> reportArticle(@RequestBody @Valid ArticleReportDTO articleReportDTO) {
         newsAggregationService.reportArticle(articleReportDTO);
-        return ResponseEntity.ok(ApiResponse.ok("Article reported successfully"));
+        return ResponseEntity.ok(ApiResponse.ok(ARTICLE_REPORTED_SUCCESS));
     }
 
     @GetMapping("/{userId}/articles-reports")
@@ -99,7 +100,7 @@ public class UserController {
     @PostMapping("/{userId}/article/{articleId}/markAsRead")
     public ResponseEntity<ApiResponse<Void>> createReadArticleHistory(@PathVariable Long userId, @PathVariable Long articleId) {
         articleReadHistoryService.markAsRead(userId, articleId);
-        return ResponseEntity.ok(ApiResponse.ok("Article read history updated successfully"));
+        return ResponseEntity.ok(ApiResponse.ok(ARTICLE_READ_HISTORY_UPDATED_SUCCESS));
     }
 
     @GetMapping("/{userId}/articles-read-history")

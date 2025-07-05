@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.news_aggregation_system.service.common.Constant.*;
+
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
@@ -30,7 +32,7 @@ public class AdminController {
 
     @PostMapping("/categories")
     public ResponseEntity<ApiResponse<CategoryDTO>> createCategory(@Valid @RequestBody CategoryDTO dto) {
-        return ResponseEntity.ok(ApiResponse.ok("Category created Successfully", categoryService.create(dto)));
+        return ResponseEntity.ok(ApiResponse.ok(CATEGORY_CREATED_SUCCESS, categoryService.create(dto)));
     }
 
     @GetMapping("/categories/{categoryId}/keywords")
@@ -42,12 +44,12 @@ public class AdminController {
     @PostMapping("/categories/{categoryId}/keywords")
     public ResponseEntity<ApiResponse<Void>> addKeywordsToCategory(@PathVariable Long categoryId, @Valid @RequestBody KeywordListRequest keywordListRequest) {
         keywordService.addKeywordsToCategory(categoryId, keywordListRequest.getKeywords());
-        return ResponseEntity.ok(ApiResponse.ok("Keywords created Successfully"));
+        return ResponseEntity.ok(ApiResponse.ok(KEYWORDS_CREATED_SUCCESS));
     }
 
     @PostMapping("/keywords")
     public ResponseEntity<ApiResponse<KeywordDTO>> createKeyword(@Valid @RequestBody KeywordDTO keywordDTO) {
-        return ResponseEntity.ok(ApiResponse.ok("Keyword created Successfully", keywordService.creteKeyword(keywordDTO)));
+        return ResponseEntity.ok(ApiResponse.ok(KEYWORD_CREATED_SUCCESS, keywordService.creteKeyword(keywordDTO)));
     }
 
     @GetMapping("/categories")
@@ -58,43 +60,43 @@ public class AdminController {
     @PatchMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<Void>> updateCategoryStatus(@PathVariable Long categoryId, @RequestParam("isEnabled") boolean isEnabled) {
         categoryService.updateCategoryStatus(categoryId, isEnabled);
-        return ResponseEntity.ok(ApiResponse.ok("Category Status Updated Successfully"));
+        return ResponseEntity.ok(ApiResponse.ok(CATEGORY_STATUS_UPDATE_SUCCESS));
     }
 
 
     @PatchMapping("/categories/{categoryId}/keywords/{keywordName}")
     public ResponseEntity<ApiResponse<Void>> updateKeywordStatus(@PathVariable Long categoryId, @PathVariable String keywordName, @RequestParam("isEnabled") boolean isEnabled) {
         keywordService.updateKeywordStatus(categoryId, keywordName, isEnabled);
-        return ResponseEntity.ok(ApiResponse.ok("Keyword Status Updated Successfully"));
+        return ResponseEntity.ok(ApiResponse.ok(KEYWORD_STATUS_UPDATE_SUCCESS));
     }
 
     @DeleteMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Long categoryId) {
         categoryService.delete(categoryId);
-        return ResponseEntity.ok(ApiResponse.ok("Category deleted Successfully"));
+        return ResponseEntity.ok(ApiResponse.ok(CATEGORY_DELETE_SUCCESS));
     }
 
     @DeleteMapping("/categories/{categoryId}/keywords/{keywordName}")
     public ResponseEntity<ApiResponse<Void>> deleteKeyword(@PathVariable Long categoryId, @PathVariable String keywordName) {
         keywordService.deleteKeywordByCategoryIdAndKeywordName(categoryId, keywordName);
-        return ResponseEntity.ok(ApiResponse.ok("Keyword deleted Successfully"));
+        return ResponseEntity.ok(ApiResponse.ok(KEYWORD_DELETE_SUCCESS));
     }
 
 
     @GetMapping("/news-sources")
     public ResponseEntity<ApiResponse<List<NewsSourceDTO>>> getAllNewsSources() {
-        return ResponseEntity.ok(ApiResponse.ok("News source Received Successfully", newsSourceService.getAll()));
+        return ResponseEntity.ok(ApiResponse.ok(newsSourceService.getAll()));
     }
 
     @PostMapping("/news-sources")
     public ResponseEntity<ApiResponse<NewsSourceDTO>> createNewsSource(@Valid @RequestBody NewsSourceDTO dto) {
-        return ResponseEntity.ok(ApiResponse.ok("News source created Successfully", newsSourceService.create(dto)));
+        return ResponseEntity.ok(ApiResponse.ok(NEWS_SOURCE_CREATED_SUCCESS, newsSourceService.create(dto)));
     }
 
     @PutMapping("/news-sources/{id}")
     public ResponseEntity<ApiResponse<NewsSourceDTO>> updateNewsSource(
             @PathVariable Long id, @Valid @RequestBody NewsSourceDTO dto) {
-        return ResponseEntity.ok(ApiResponse.ok("News source updated Successfully", newsSourceService.update(id, dto)));
+        return ResponseEntity.ok(ApiResponse.ok(NEWS_SOURCE_UPDATED_SUCCESS, newsSourceService.update(id, dto)));
     }
 
     @PatchMapping("/news-sources/{id}/apikey")
@@ -103,7 +105,7 @@ public class AdminController {
             @Valid @NotNull(message = "ApiKey Cannot be null or empty") @RequestParam("newApiKey") String newApiKey) {
 
         newsSourceService.updateSourceApiKeyById(sourceId, newApiKey);
-        return ResponseEntity.ok(ApiResponse.ok("API key updated successfully"));
+        return ResponseEntity.ok(ApiResponse.ok(API_KEY_UPDATE_SUCCESS));
     }
 
 
@@ -114,14 +116,14 @@ public class AdminController {
 
     @GetMapping("/news-sources/{id}")
     public ResponseEntity<ApiResponse<NewsSourceDTO>> getNewsSourceById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.ok("News source Received Successfully", newsSourceService.getById(id)));
+        return ResponseEntity.ok(ApiResponse.ok(newsSourceService.getById(id)));
     }
 
     @PatchMapping("/articles/{id}/status")
     public ResponseEntity<ApiResponse<Void>> updateArticleStatus(@PathVariable Long id, @RequestParam("isEnabled") boolean isEnabled) {
 
         newsAggregationService.updateArticleStatusById(id, isEnabled);
-        return ResponseEntity.ok(ApiResponse.ok("Article " + (isEnabled ? "enabled" : "hidden") + "Successfully"));
+        return ResponseEntity.ok(ApiResponse.ok(ARTICLE + (isEnabled ? ENABLED : HIDDEN) + SUCCESSFULLY));
     }
 
     @GetMapping("/reported-articles")

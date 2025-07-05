@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Transactional
+import static com.news_aggregation_system.service.common.Constant.*;
+
 @Service
 public class KeywordServiceImpl implements KeywordService {
 
@@ -27,26 +28,19 @@ public class KeywordServiceImpl implements KeywordService {
         this.categoryRepository = categoryRepository;
     }
 
-
+    @Transactional
     @Override
     public KeywordDTO creteKeyword(KeywordDTO keywordDTO) {
         Keyword keyword = keywordRepository.save(KeywordMapper.toEntity(keywordDTO));
         return KeywordMapper.toDto(keyword);
     }
 
-    @Override
-    public void deleteKeywordByCategoryIdAndKeywordId(Long categoryId, Long keywordId) {
-        int deleted = keywordRepository.deleteKeywordByCategoryCategoryIdAndKeywordId(categoryId, keywordId);
-        if (deleted < 1) {
-            throw new NotFoundException("Keyword not found so unable to delete");
-        }
-    }
-
+    @Transactional
     @Override
     public void deleteKeywordByCategoryIdAndKeywordName(Long categoryId, String keywordName) {
         int deleted = keywordRepository.deleteKeywordByCategoryCategoryIdAndNameContainingIgnoreCase(categoryId, keywordName);
         if (deleted < 1) {
-            throw new NotFoundException("Keyword not found so unable to delete");
+            throw new NotFoundException(KEYWORD_NOT_FOUND_DELETE_UNABLE);
         }
     }
 
@@ -56,26 +50,23 @@ public class KeywordServiceImpl implements KeywordService {
         return keywordRepository.getKeywordsByCategoryCategoryId(categoryId).stream().map(KeywordMapper::toDto).collect(Collectors.toList());
     }
 
-    @Override
-    public void updateKeywordStatus(Long categoryId, Long keywordId, boolean enabled) {
-        keywordRepository.updateEnabledByCategoryCategoryIdAndKeywordId(enabled, categoryId, keywordId);
-    }
-
+    @Transactional
     @Override
     public void updateKeywordStatus(Long categoryId, String keywordName, boolean enabled) {
         int updated = keywordRepository.updateEnabledByCategoryCategoryIdAndNameContainingIgnoreCase(enabled, categoryId, keywordName);
         if (updated < 1) {
-            throw new NotFoundException("Keyword not found so unable to update");
+            throw new NotFoundException(KEYWORD_NOT_FOUND_UPDATE_UNABLE);
         }
     }
 
 
+    @Transactional
     @Override
     public void addKeywordsToCategory(Long categoryId, List<String> keywords) {
         boolean isCategoryExist = categoryRepository.existsById(categoryId);
 
         if (!isCategoryExist) {
-            throw new NotFoundException("Category not found.");
+            throw new NotFoundException(CATEGORY_NOT_FOUND);
         }
         List<Keyword> keywordList = new ArrayList<>();
         for (String keyword : keywords) {
@@ -95,5 +86,10 @@ public class KeywordServiceImpl implements KeywordService {
             keywordRepository.saveAll(keywordList);
 
         }
+    }
+
+    @Override
+    public List<KeywordDTO> findByEnabledFalse() {
+        return keywordRepository.findByEnabledFalse().stream().map(KeywordMapper::toDto).collect(Collectors.toList());
     }
 }

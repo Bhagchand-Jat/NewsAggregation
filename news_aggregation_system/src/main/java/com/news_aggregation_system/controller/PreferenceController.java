@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Set;
 
+import static com.news_aggregation_system.service.common.Constant.*;
+
 
 @RestController
 @RequestMapping("/api/users/{userId}/notifications/preferences")
@@ -30,14 +32,14 @@ public class PreferenceController {
     public ResponseEntity<ApiResponse<Void>> enableCategoryPreference(
             @PathVariable Long userId, @PathVariable Long categoryId) {
         categoryPreferenceService.enableCategoryForUser(userId, categoryId);
-        return ResponseEntity.ok(ApiResponse.ok("Category enabled"));
+        return ResponseEntity.ok(ApiResponse.ok(CATEGORY_ENABLED_SUCCESS));
     }
 
     @DeleteMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<Void>> disableCategoryPreference(
             @PathVariable Long userId, @PathVariable Long categoryId) {
         categoryPreferenceService.disableCategoryForUser(userId, categoryId);
-        return ResponseEntity.ok(ApiResponse.ok("Category disabled"));
+        return ResponseEntity.ok(ApiResponse.ok(CATEGORY_DISABLED_SUCCESS));
     }
 
 
@@ -45,14 +47,14 @@ public class PreferenceController {
     public ResponseEntity<ApiResponse<Void>> addKeywordsToCategory(
             @PathVariable Long userId, @PathVariable Long categoryId, @Valid @RequestBody KeywordListRequest request) {
         categoryPreferenceService.addKeywordsToCategory(userId, categoryId, request.getKeywords());
-        return ResponseEntity.ok(ApiResponse.ok("Keyword Added successfully"));
+        return ResponseEntity.ok(ApiResponse.ok(KEYWORD_ADDED_SUCCESS));
     }
 
     @DeleteMapping("/categories/{categoryId}/keywords")
     public ResponseEntity<ApiResponse<Void>> deleteKeyword(
             @PathVariable Long userId, @PathVariable Long categoryId, @Param("keyword") String keyword) {
         categoryPreferenceService.deleteKeywordFromCategory(userId, categoryId, keyword);
-        return ResponseEntity.ok(ApiResponse.ok("Keyword deleted Successfully"));
+        return ResponseEntity.ok(ApiResponse.ok(KEYWORD_DELETE_SUCCESS));
     }
 
     @GetMapping("/categories")

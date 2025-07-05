@@ -34,5 +34,5 @@ public interface NewsAggregationService extends BaseService<ArticleDTO, Long> {
 
     List<ArticleReportDTO> getAllArticlesReportsByUserId(Long userId);
 
-    List<ArticleDTO> filterArticles(ArticleFilterRequestDTO articleFilterRequestDTO);
+    List<ArticleDTO> filterArticles(Long userId, ArticleFilterRequestDTO articleFilterRequestDTO);
 }

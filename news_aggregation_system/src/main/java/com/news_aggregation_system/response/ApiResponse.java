@@ -19,7 +19,7 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> ok(T data) {
-        return new ApiResponse<>("Success", true, data);
+        return new ApiResponse<>("", true, data);
     }
 
     public static <T> ApiResponse<T> ok(String message, T data) {
@@ -27,7 +27,7 @@ public class ApiResponse<T> {
     }
 
     public static ApiResponse<Void> ok() {
-        return new ApiResponse<>("Success", true, null);
+        return new ApiResponse<>("", true, null);
     }
 
     public static ApiResponse<Void> ok(String message) {
