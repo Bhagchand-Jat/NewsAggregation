@@ -4,11 +4,12 @@ import com.news_aggregation_system.dto.ArticleDTO;
 import com.news_aggregation_system.dto.NotificationDTO;
 import com.news_aggregation_system.mapper.NotificationMapper;
 import com.news_aggregation_system.model.Notification;
+import com.news_aggregation_system.model.NotificationConfig;
 import com.news_aggregation_system.model.User;
+import com.news_aggregation_system.model.UserCategoryPreference;
+import com.news_aggregation_system.repository.NotificationConfigRepository;
 import com.news_aggregation_system.repository.NotificationRepository;
 import com.news_aggregation_system.repository.UserRepository;
-import com.news_aggregation_system.service.common.Constant;
-import com.news_aggregation_system.service.user.CategoryPreferenceService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +22,14 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
-    private final CategoryPreferenceService categoryPreferenceService;
+    private final NotificationConfigRepository notificationConfigRepository;
     private final EmailService emailService;
 
-    public NotificationServiceImpl(NotificationRepository notificationRepository, UserRepository userRepository, CategoryPreferenceService categoryPreferenceService, EmailService emailService) {
+    public NotificationServiceImpl(NotificationRepository notificationRepository, UserRepository userRepository,
+                                   NotificationConfigRepository notificationConfigRepository, EmailService emailService) {
         this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
-        this.categoryPreferenceService = categoryPreferenceService;
+        this.notificationConfigRepository = notificationConfigRepository;
         this.emailService = emailService;
     }
 
@@ -52,9 +54,9 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void sendNotificationsForNewArticles(List<ArticleDTO> newArticles) {
         userRepository.findAll().forEach(user -> {
-
-            if (Objects.equals(user.getRole().getRole(), Constant.USER_ROLE)) {
-                Set<ArticleDTO> matchedArticles = getMatchedArticles(newArticles, user.getUserId());
+            Optional<NotificationConfig> notificationConfig = notificationConfigRepository.findByUser(user);
+            if (notificationConfig.isPresent()) {
+                Set<ArticleDTO> matchedArticles = getMatchedArticles(newArticles, notificationConfig.get());
                 if (!matchedArticles.isEmpty()) {
                     createNotification(buildNotification(user, matchedArticles));
                     sendEmail(user.getEmail(), matchedArticles);
@@ -65,30 +67,75 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void createNotification(Notification notification) {
+    public NotificationDTO createNotification(Notification notification) {
         notification = notificationRepository.save(notification);
-        NotificationMapper.toDto(notification);
+        return NotificationMapper.toDto(notification);
     }
 
     private Set<ArticleDTO> getMatchedArticles(List<ArticleDTO> articles,
-                                               Long userId) {
+                                               NotificationConfig config) {
 
-        Set<String> userKeywords = extractUserKeywords(userId);
+        Set<String> enabledCategories = extractEnabledCategoryNames(config);
+        Set<ArticleDTO> categoryMatchedArticles = filterByCategories(articles, enabledCategories);
 
-        return articles.stream()
-                .filter(article -> containsKeyword(article, userKeywords))
+        if (!config.isKeywordsEnabled()) {
+            return categoryMatchedArticles;
+        }
+
+        Set<ArticleDTO> matchedArticles = new HashSet<>(categoryMatchedArticles);
+
+        Set<ArticleDTO> remaining = new HashSet<>(articles);
+        remaining.removeAll(categoryMatchedArticles);
+        if (remaining.isEmpty()) {
+            return categoryMatchedArticles;
+        }
+
+        Set<String> userKeywords = extractUserKeywords(config);
+        Set<ArticleDTO> keywordMatchedArticles = filterByKeywords(remaining, userKeywords);
+        if (!keywordMatchedArticles.isEmpty()) {
+            matchedArticles.addAll(keywordMatchedArticles);
+        }
+
+        return matchedArticles;
+    }
+
+    private Set<String> extractEnabledCategoryNames(NotificationConfig config) {
+        return config.getCategoryPreferences().stream()
+                .filter(UserCategoryPreference::isEnabled)
+                .map(pref -> pref.getCategory().getName().toLowerCase())
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
+    private Set<ArticleDTO> filterByCategories(List<ArticleDTO> articles,
+                                               Set<String> categories) {
+        if (categories.isEmpty()) return Set.of();
 
-    private Set<String> extractUserKeywords(Long userId) {
-        return categoryPreferenceService.getEnabledKeywords(userId);
+        return articles.stream()
+                .filter(article -> article.getCategories().stream()
+                        .map(c -> c.getName().toLowerCase())
+                        .anyMatch(categories::contains))
+                .collect(Collectors.toCollection(HashSet::new));
+    }
+
+    private Set<String> extractUserKeywords(NotificationConfig config) {
+        return config.getUser().getKeywords().stream()
+                .map(k -> k.getName().toLowerCase())
+                .collect(Collectors.toCollection(HashSet::new));
+    }
+
+    private Set<ArticleDTO> filterByKeywords(Set<ArticleDTO> articles,
+                                             Set<String> keywords) {
+        if (keywords.isEmpty()) return Set.of();
+
+        return articles.stream()
+                .filter(article -> containsKeyword(article, keywords))
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     private boolean containsKeyword(ArticleDTO article, Set<String> keywords) {
         String title = article.getTitle().toLowerCase();
         String content = article.getContent().toLowerCase();
-        return keywords.stream().anyMatch(keyword -> title.contains(keyword) || content.contains(keyword));
+        return keywords.stream().anyMatch(kw -> title.contains(kw) || content.contains(kw));
     }
 
     private Notification buildNotification(User user, Collection<ArticleDTO> matches) {
@@ -117,9 +164,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void deleteByIsViewedTrueAndReadAtBefore(Date date) {
-        notificationRepository.deleteByViewedTrueAndReadAtBefore(date);
+        int deleted = notificationRepository.deleteByViewedTrueAndReadAtBefore(date);
 
     }
-
-
 }

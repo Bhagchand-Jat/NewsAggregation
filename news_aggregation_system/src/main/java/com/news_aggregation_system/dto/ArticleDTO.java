@@ -28,10 +28,6 @@ public class ArticleDTO {
 
     private boolean enabled = true;
 
-    private int likeCount;
-    private int dislikeCount;
-
-
     private Date publishedAt;
     private Set<Category> categories = new HashSet<>();
 
@@ -111,21 +107,4 @@ public class ArticleDTO {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
-    public int getLikeCount() {
-        return likeCount;
-    }
-
-    public void setLikeCount(int likeCount) {
-        this.likeCount = likeCount;
-    }
-
-    public int getDislikeCount() {
-        return dislikeCount;
-    }
-
-    public void setDislikeCount(int dislikeCount) {
-        this.dislikeCount = dislikeCount;
-    }
-
 }

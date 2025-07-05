@@ -2,6 +2,9 @@ package com.news_aggregation_system.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -23,6 +26,16 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private NotificationConfig notificationConfig;
+    @OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL)
+    private Set<Category> categories = new HashSet<>();
+
+    @OneToMany(mappedBy = "keywordId", cascade = CascadeType.ALL)
+    private Set<Keyword> keywords = new HashSet<>();
+
+    @OneToMany(mappedBy = "notificationId", cascade = CascadeType.ALL)
+    private Set<Notification> notifications = new HashSet<>();
 
     public User() {
     }
@@ -67,5 +80,38 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
+    }
+
+    public Set<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(Set<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
+    public NotificationConfig getNotificationConfig() {
+        return notificationConfig;
+    }
+
+    public void setNotificationConfig(NotificationConfig notificationConfig) {
+        this.notificationConfig = notificationConfig;
+    }
+
+    public Set<Keyword> getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(Set<Keyword> keywords) {
+        this.keywords = keywords;
+    }
+
 
 }
