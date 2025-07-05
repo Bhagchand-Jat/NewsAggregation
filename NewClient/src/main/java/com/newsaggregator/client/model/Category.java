@@ -1,5 +1,8 @@
 package com.newsaggregator.client.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Category {
 
 
@@ -8,7 +11,7 @@ public class Category {
     private String name;
     private boolean enabled;
 
-    private User user;
+    private Set<Keyword> keywords = new HashSet<>();
 
     public Category() {
     }
@@ -37,12 +40,12 @@ public class Category {
         this.enabled = enabled;
     }
 
-    public User getUser() {
-        return user;
+    public Set<Keyword> getKeywords() {
+        return keywords;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setKeywords(Set<Keyword> keywords) {
+        this.keywords = keywords;
     }
 }
 

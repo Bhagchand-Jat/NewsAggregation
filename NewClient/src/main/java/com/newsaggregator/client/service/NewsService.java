@@ -1,6 +1,7 @@
 package com.newsaggregator.client.service;
 
 import com.newsaggregator.client.dto.ArticleDTO;
+import com.newsaggregator.client.dto.ArticleReadHistoryDTO;
 import com.newsaggregator.client.dto.ArticleReportDTO;
 import com.newsaggregator.client.dto.CategoryDTO;
 
@@ -31,4 +32,8 @@ public interface NewsService {
     List<CategoryDTO> getCategories();
 
     List<ArticleReportDTO> getUserReports(Long userId);
+
+    void markArticleAsRead(Long userId, Long articleId);
+
+    List<ArticleReadHistoryDTO> getArticlesReadHistory(Long userId);
 }

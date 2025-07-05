@@ -24,6 +24,10 @@ public class ArticleDTO {
 
     private Date publishedAt;
     private boolean enabled;
+    private int likeCount;
+    private int dislikeCount;
+    private int reportCount;
+
     private Set<Category> categories = new HashSet<>();
 
 
@@ -32,6 +36,10 @@ public class ArticleDTO {
 
     public Long getArticleId() {
         return articleId;
+    }
+
+    public void setArticleId(Long articleId) {
+        this.articleId = articleId;
     }
 
     public String getTitle() {
@@ -66,7 +74,6 @@ public class ArticleDTO {
         this.url = url;
     }
 
-
     public String getDescription() {
         return description;
     }
@@ -89,6 +96,30 @@ public class ArticleDTO {
 
     public void setCategories(Set<Category> categories) {
         this.categories = categories;
+    }
+
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public int getDislikeCount() {
+        return dislikeCount;
+    }
+
+    public void setDislikeCount(int dislikeCount) {
+        this.dislikeCount = dislikeCount;
+    }
+
+    public int getReportCount() {
+        return reportCount;
+    }
+
+    public void setReportCount(int reportCount) {
+        this.reportCount = reportCount;
     }
 
     public boolean isEnabled() {

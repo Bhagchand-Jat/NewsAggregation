@@ -13,9 +13,8 @@ public final class ControllerUtil {
 
     public static <E extends Enum<E> & Labeled> E promptChoice(E[] values, String header) {
         System.out.println("\n" + header + "\n");
-//        Map<Integer,E> choices = new HashMap<>();
+
         for (int index = 0; index < values.length; index++) {
-//            choices.put(index, values[index+1]);
             System.out.printf("%d. %s%n", index + 1, values[index].getLabel());
         }
         try {
@@ -51,7 +50,7 @@ public final class ControllerUtil {
 
     public static boolean invalidIndex(int choice, int size) {
         if (choice < 1 || choice > size) {
-            System.out.println(INVALID);
+            System.out.println("\n" + INVALID);
             return true;
         }
         return false;
@@ -75,7 +74,7 @@ public final class ControllerUtil {
             try {
                 return ConsoleUtils.readInt(prompt);
             } catch (NumberFormatException ex) {
-                System.out.println(INVALID);
+                System.out.println("\n" + INVALID);
             }
         }
     }

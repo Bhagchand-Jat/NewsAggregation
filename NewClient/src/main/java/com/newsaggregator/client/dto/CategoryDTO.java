@@ -1,5 +1,9 @@
 package com.newsaggregator.client.dto;
 
+import com.newsaggregator.client.model.Keyword;
+
+import java.util.Set;
+
 public class CategoryDTO {
     private Long categoryId;
 
@@ -7,6 +11,8 @@ public class CategoryDTO {
 
     private Long userId;
     private boolean enabled = true;
+
+    private Set<Keyword> keywords;
 
 
     public CategoryDTO(String name, Long userId) {
@@ -70,5 +76,11 @@ public class CategoryDTO {
         this.enabled = enabled;
     }
 
+    public Set<Keyword> getKeywords() {
+        return keywords;
+    }
 
+    public void setKeywords(Set<Keyword> keywords) {
+        this.keywords = keywords;
+    }
 }

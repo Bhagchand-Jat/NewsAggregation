@@ -1,22 +1,25 @@
 package com.newsaggregator.client.controller;
 
-import com.newsaggregator.client.dto.ArticleDTO;
-import com.newsaggregator.client.dto.CategoryDTO;
-import com.newsaggregator.client.dto.NewsSourceDTO;
+import com.newsaggregator.client.dto.*;
+import com.newsaggregator.client.model.Keyword;
 import com.newsaggregator.client.service.AdminService;
 import com.newsaggregator.client.service.NewsService;
 import com.newsaggregator.client.session.UserSession;
 import com.newsaggregator.client.util.AdminMainMenu;
+import com.newsaggregator.client.util.CategoryMenu;
 import com.newsaggregator.client.util.ConsoleUtils;
 import com.newsaggregator.client.util.Constant;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static com.newsaggregator.client.util.ControllerUtil.promptChoice;
+import static com.newsaggregator.client.util.Constant.simpleDateFormatter;
+import static com.newsaggregator.client.util.ControllerUtil.*;
 import static com.newsaggregator.client.util.UiText.*;
 
 public class AdminController {
@@ -49,12 +52,9 @@ public class AdminController {
                     updateNewsSourceApiKey();
                     yield true;
                 }
+
                 case ADD_CATEGORY -> {
                     addCategory();
-                    yield true;
-                }
-                case UPDATE_CATEGORY_STATUS -> {
-                    toggleCategoryStatus();
                     yield true;
                 }
                 case VIEW_CATEGORIES -> {
@@ -69,10 +69,63 @@ public class AdminController {
                     updateNewsArticleStatus();
                     yield true;
                 }
+                case VIEW_REPORTED_ARTICLES -> {
+                    viewReportedArticles();
+                    yield true;
+                }
+                case VIEW_ARTICLE_REPORT_THRESHOLD -> {
+                    viewArticleReportThreshold();
+                    yield true;
+                }
+                case UPDATE_ARTICLE_REPORT_THRESHOLD -> {
+                    updateArticleReportThreshold();
+                    yield true;
+                }
                 case LOGOUT -> false;
             };
         }
         return false;
+    }
+
+    private void viewReportedArticles() {
+        List<ArticleDTO> reportedArticles = adminService.getAllReportedArticles();
+        printArticles(reportedArticles);
+
+        if (!reportedArticles.isEmpty()) {
+            showArticleReports(reportedArticles);
+        }
+    }
+
+    private void showArticleReports(List<ArticleDTO> reportedArticles) {
+        int articleIndexChoice = readIntSafe("\n" + SELECT_ONE_ARTICLE_TO_SHOW_REASONS_OR_BACK_OPTION);
+        if (articleIndexChoice == 0) {
+            return;
+        }
+        if (articleIndexChoice > 0 && articleIndexChoice <= reportedArticles.size()) {
+
+            List<ArticleReportDTO> reports = adminService.getAllReportsOfArticle(reportedArticles.get(articleIndexChoice - 1).getArticleId());
+            printIndexed(reports, articleReportDTO -> articleReportDTO.getReason() + " - " + Optional.ofNullable(articleReportDTO.getReportedAt())
+                    .map(simpleDateFormatter::format)
+                    .orElse(NA));
+            showArticleReports(reportedArticles);
+        } else {
+            System.out.println(INVALID);
+            showArticleReports(reportedArticles);
+        }
+    }
+
+    private void updateArticleReportThreshold() {
+
+        int thresholdInput = readIntSafe(REPORT_THRESHOLD_PROMPT);
+
+        adminService.updateArticleReportThreshold(thresholdInput);
+    }
+
+    private void viewArticleReportThreshold() {
+        Long threshold = adminService.getArticleReportThreshold();
+        if (threshold != null) {
+            System.out.println("Threshold: " + threshold);
+        }
     }
 
 
@@ -90,7 +143,7 @@ public class AdminController {
                 Optional.ofNullable(src.getLastAccessed())
                         .map(d -> d.format(Constant.dateFormatter))
                         .orElse(NA)));
-        ConsoleUtils.readLine(PRESS_RETURN);
+        pause();
     }
 
     private void viewNewsSourcesDetails() {
@@ -102,7 +155,7 @@ public class AdminController {
         }
         sources.forEach(newsSource -> System.out.printf("%d. %s - " + API_KEY + " %s%n",
                 newsSource.getSourceId(), newsSource.getSourceName(), newsSource.getSourceApiKey()));
-        ConsoleUtils.readLine(PRESS_RETURN);
+        pause();
     }
 
     private void updateNewsSourceApiKey() {
@@ -110,12 +163,14 @@ public class AdminController {
         if (newsSourceId == 0) return;
         String apiKey = ConsoleUtils.readLine(NEW_API_KEY_PROMPT);
         adminService.updateNewsSourceApiKey(newsSourceId, apiKey);
+        pause();
     }
 
 
     private void addCategory() {
         String name = ConsoleUtils.readLine(NEW_CATEGORY_NAME_PROMPT);
         adminService.addCategory(name);
+        pause();
     }
 
     private void viewAllCategories() {
@@ -125,43 +180,119 @@ public class AdminController {
             System.out.println(NO_CATEGORIES);
             return;
         }
-        categories.forEach(c -> System.out.printf("%d. %s %s%n", c.getCategoryId(), c.getName(),
-                c.isEnabled() ? ENABLED_LABEL : DISABLED_LABEL));
-        ConsoleUtils.readLine(PRESS_RETURN);
+        printIndexed(categories, category -> category.getName() + " "
+                + (category.isEnabled() ? ENABLED_LABEL : DISABLED_LABEL)
+                + (!category.getKeywords().isEmpty() ? "\n keywords ---> " + category.getKeywords().stream()
+                .map(Keyword::getName).collect(Collectors.joining(",")) : ""));
+        pause();
+
+        selectOneCategoryMenu(categories);
+
     }
 
-    private void toggleCategoryStatus() {
+    private void selectOneCategoryMenu(List<CategoryDTO> categories) {
+        int categoryIndex = readIntSafe(SELECT_ONE_CATEGORY_OR_BACK_OPTION);
+        if (categoryIndex == 0) {
+            return;
+        }
+        if (!invalidIndex(categoryIndex, categories.size())) {
+            CategoryDTO category = categories.get(categoryIndex - 1);
+            categoryMenu(category);
+        } else {
+            selectOneCategoryMenu(categories);
+        }
+    }
 
-        long categoryId = ConsoleUtils.readLong(CATEGORY_ID_TOGGLE_PROMPT);
-        if (categoryId == 0) return;
-        boolean enabled = ConsoleUtils.readBoolean(ENABLE_CATEGORY_PROMPT);
-        adminService.updateCategoryStatus(categoryId, enabled);
+    private void categoryMenu(CategoryDTO category) {
+        while (true) {
+            switch (promptChoice(CategoryMenu.values(), CHOOSE_OPTION_BELOW)) {
+                case UPDATE_CATEGORY_STATUS -> updateCategoryStatus(category.getCategoryId(), !category.isEnabled());
+                case ADD_KEYWORDS -> addKeywords(category.getCategoryId());
+                case VIEW_KEYWORDS -> viewKeywordsForCategory(category.getCategoryId());
+                case UPDATE_KEYWORD_STATUS -> updateKeywordStatusView(category.getCategoryId());
+                case DELETE_KEYWORD -> deleteKeyword(category.getCategoryId());
+                case BACK -> {
+                    return;
+                }
+
+            }
+        }
+    }
+
+    private void viewKeywordsForCategory(Long categoryId) {
+        List<KeywordDTO> keywords = adminService.getAllKeywordsForCategory(categoryId);
+        if (keywords == null || keywords.isEmpty()) {
+            System.out.println("\n" + NO_KEYWORDS);
+            pause();
+            return;
+        }
+        printIndexed(keywords, KeywordDTO::getName);
+        pause();
+    }
+
+    private void deleteKeyword(Long categoryId) {
+        String keywordInput = ConsoleUtils.readLine(ENTER_KEYWORD_TO_DELETE);
+        if (keywordInput.isEmpty()) {
+            System.out.println("\n" + NO_KEYWORD_INPUT + "\n");
+            deleteKeyword(categoryId);
+        }
+        adminService.deleteKeyword(categoryId, keywordInput);
+        pause();
+    }
+
+    private void updateKeywordStatusView(Long categoryId) {
+        String keywordInput = ConsoleUtils.readLine(ENTER_KEYWORD_TO_UPDATE);
+        boolean isEnabled = ConsoleUtils.readBoolean(ENABLE_KEYWORD_PROMPT);
+
+        adminService.updateKeywordStatus(categoryId, keywordInput, isEnabled);
+        pause();
+
+    }
+
+    private void addKeywords(Long categoryId) {
+        String keywords = ConsoleUtils.readLine(ENTER_KEYWORDS);
+        adminService.addKeywordsToCategory(categoryId, Arrays.stream(keywords.split(",")).toList());
+        pause();
+
+    }
+
+    private void updateCategoryStatus(Long categoryId, boolean isEnabled) {
+
+        adminService.updateCategoryStatus(categoryId, isEnabled);
+        pause();
     }
 
 
     private void viewAllNewsArticles() {
         System.out.println("\n" + ARTICLES_HEADER);
         List<ArticleDTO> articles = newsService.allNewsArticles();
-        if (articles == null || articles.isEmpty()) {
-            System.out.println(NO_ARTICLES);
-            return;
-        }
-        articles.forEach(article -> System.out.printf("%d. %s %s%n", article.getArticleId(), article.getTitle(), article.isEnabled() ? ENABLED_LABEL : DISABLED_LABEL));
-        ConsoleUtils.readLine(PRESS_RETURN);
+        printArticles(articles);
     }
 
     private void updateNewsArticleStatus() {
 
-        long articleId = ConsoleUtils.readLong(ARTICLE_ID_UPDATE_PROMPT);
+        long articleId = ConsoleUtils.readLong(ARTICLE_INDEX_UPDATE_PROMPT);
         if (articleId == 0) return;
         boolean enabled = ConsoleUtils.readBoolean(ENABLE_ARTICLE_PROMPT);
         adminService.updateNewsArticleStatus(articleId, enabled);
+        pause();
     }
 
 
     private void printWelcome() {
         System.out.printf("%nWelcome Admin, %s | Date: %s | Time: %s%n", session.getUserName(),
                 LocalDate.now().format(Constant.dateFormatter), LocalTime.now().format(Constant.timeFormatter));
+    }
+
+    private void printArticles(List<ArticleDTO> articles) {
+        if (articles == null || articles.isEmpty()) {
+            System.out.println(NO_ARTICLES);
+            pause();
+            return;
+        }
+        printIndexed(articles, article -> article.getTitle() + " - " + (article.isEnabled() ? ENABLED_LABEL : DISABLED_LABEL) + "\n     ---> " + LIKES + article.getLikeCount() + DISLIKES + article.getDislikeCount() + TOTAL_REPORT + article.getReportCount());
+        pause();
+
     }
 
 

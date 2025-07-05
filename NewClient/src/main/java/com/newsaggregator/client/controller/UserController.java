@@ -53,6 +53,10 @@ public class UserController {
                     notificationMenu();
                     yield true;
                 }
+                case ARTICLES_READ_HISTORY -> {
+                    showArticleReadHistory();
+                    yield true;
+                }
                 case LOGOUT -> false;
             };
         }
@@ -101,8 +105,8 @@ public class UserController {
             }
 
             printIndexed(categories, CategoryDTO::getName);
-            System.out.println("\n" + SELECT_CATEGORY_INDEX_TO_SHOW_HEADINGS + "\n");
-            int choice = readIntSafe(CHOICE);
+
+            int choice = readIntSafe(SELECT_CATEGORY_INDEX_TO_SHOW_HEADINGS);
             if (choice == 0 || invalidIndex(choice, categories.size())) return;
 
             CategoryDTO categoryDTO = categories.get(choice - 1);
@@ -134,11 +138,10 @@ public class UserController {
 
         while (true) {
             printIndexed(articles, ArticleDTO::getTitle);
-            System.out.println("\n" + SELECT_ONE_ARTICLE_OR_BACK_OPTION + "\n");
-            int choice = readIntSafe(CHOICE);
+
+            int choice = readIntSafe("\n" + SELECT_ONE_ARTICLE_OR_BACK_OPTION);
             if (choice == 0) return;
             if (invalidIndex(choice, articles.size())) {
-                System.out.println(INVALID);
                 continue;
             }
             onSelect.accept(articles.get(choice - 1));
@@ -189,30 +192,47 @@ public class UserController {
         while (true) {
             System.out.println("\n" + CONFIGURE_NOTIFICATIONS_HEADER + "\n");
             printIndexed(categoriesStatus, categoryStatusDTO -> categoryStatusDTO.getName() + " – " + (categoryStatusDTO.isEnabled() ? ENABLED_LABEL : DISABLED_LABEL));
-            System.out.println((categoriesStatus.size() + 1) + ". " + BACK_LABEL);
-            int choice = readIntSafe(CHOICE);
-            if (choice == categoriesStatus.size() + 1 || invalidIndex(choice, categoriesStatus.size())) return;
-            categoryMenu(categoriesStatus.get(choice - 1));
+
+            int choice = readIntSafe(SELECT_ONE_CATEGORY_OR_BACK_OPTION);
+            if (choice == 0) return;
+            if (!invalidIndex(choice, categoriesStatus.size())) {
+                categoryMenu(categoriesStatus.get(choice - 1));
+            }
+
         }
     }
 
-    private void categoryMenu(CategoryStatusDTO cat) {
+    private void categoryMenu(CategoryStatusDTO categoryStatus) {
         while (true) {
-            System.out.printf(CATEGORY_UPDATE_PROMPT + "\n", cat.getName());
-            System.out.println("1. " + (cat.isEnabled() ? DISABLE_LABEL : ENABLE_LABEL));
-            System.out.println("2. " + ADD_KEYWORDS_TO_CATEGORY);
-            System.out.println("3. " + BACK_LABEL);
-
-            switch (ConsoleUtils.readLine(CHOICE)) {
-                case "1" -> notificationService.updateCategoryStatus(session.getUserId(),
-                        cat.getCategoryId(), !cat.isEnabled());
-                case "2" -> addKeywordsToCategory(cat.getCategoryId());
-                case "3" -> {
+            switch (promptChoice(categoryActions(), CATEGORY_UPDATE_PROMPT.replace("%s", categoryStatus.getName()))) {
+                case UPDATE_CATEGORY_STATUS -> notificationService.updateCategoryStatus(session.getUserId(),
+                        categoryStatus.getCategoryId(), !categoryStatus.isEnabled());
+                case ADD_KEYWORDS -> addKeywordsToCategory(categoryStatus.getCategoryId());
+                case VIEW_KEYWORDS -> viewKeywordsForCategory(categoryStatus.getCategoryId());
+                case DELETE_KEYWORD -> deleteKeywordFromCategory(categoryStatus.getCategoryId());
+                case BACK -> {
                     return;
                 }
-                default -> System.out.println(INVALID);
             }
+
+
         }
+    }
+
+    private void viewKeywordsForCategory(Long categoryId) {
+        List<String> keywords = notificationService.viewKeywordsForCategory(session.getUserId(), categoryId);
+        if (keywords == null || keywords.isEmpty()) {
+            System.out.println("\n" + NO_KEYWORDS);
+            pause();
+            return;
+        }
+        printIndexed(keywords, keyword -> keyword);
+        pause();
+    }
+
+    private void deleteKeywordFromCategory(Long categoryId) {
+        String keyword = ConsoleUtils.readLine(UiText.ENTER_KEYWORD_TO_DELETE);
+        notificationService.deleteUserKeyword(session.getUserId(), categoryId, keyword);
     }
 
     private void showNotifications() {
@@ -256,24 +276,40 @@ public class UserController {
         articleActionMenu(articleDTO, actions, SEARCH_ARTICLES_HEADER);
     }
 
+    private CategoryMenu[] categoryActions() {
+        EnumSet<CategoryMenu> categorySet = EnumSet.of(CategoryMenu.UPDATE_CATEGORY_STATUS, CategoryMenu.ADD_KEYWORDS, CategoryMenu.VIEW_KEYWORDS, CategoryMenu.BACK);
+        return categorySet.toArray(new CategoryMenu[0]);
+    }
+
     private void addKeywordsToCategory(Long categoryId) {
         String keywords = ConsoleUtils.readLine(ENTER_KEYWORDS);
         notificationService.addKeywordsToCategory(session.getUserId(),
                 categoryId, Arrays.stream(keywords.split(",")).map(String::trim).toList());
     }
 
-    private void showFullArticle(ArticleDTO art) {
+    private void showFullArticle(ArticleDTO articleDTO) {
+        newsService.markArticleAsRead(session.getUserId(), articleDTO.getArticleId());
         System.out.printf("%nID: %d%nTitle: %s%nDescription: %s%n",
-                art.getArticleId(), art.getTitle(), art.getDescription());
+                articleDTO.getArticleId(), articleDTO.getTitle(), articleDTO.getDescription());
         System.out.println("Categories:");
-        art.getCategories().forEach(c -> System.out.println("  -> " + c.getName()));
+        articleDTO.getCategories().forEach(c -> System.out.println("  -> " + c.getName()));
+        System.out.println("Likes: " + articleDTO.getLikeCount() + " DisLikes: " + articleDTO.getDislikeCount());
         System.out.printf("Content: %s%nSource: %s%nURL: %s%n",
-                art.getContent(), art.getSource(), art.getUrl());
+                articleDTO.getContent(), articleDTO.getSource(), articleDTO.getUrl());
     }
 
     private void reportArticle(ArticleDTO articleDTO) {
         String reason = ConsoleUtils.readLine(REPORT_REASON_PROMPT);
 
         newsService.reportArticle(session.getUserId(), articleDTO.getArticleId(), reason);
+    }
+
+    private void showArticleReadHistory() {
+        List<ArticleReadHistoryDTO> articlesReadHistory = newsService.getArticlesReadHistory(session.getUserId());
+        if (articlesReadHistory == null || articlesReadHistory.isEmpty()) {
+            System.out.println(NO_ARTICLE_HISTORY);
+        } else {
+            printIndexed(articlesReadHistory, ArticleReadHistoryDTO::getArticleTitle);
+        }
     }
 }
