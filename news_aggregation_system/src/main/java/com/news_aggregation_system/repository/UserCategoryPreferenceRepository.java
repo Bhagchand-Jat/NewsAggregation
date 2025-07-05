@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface UserCategoryPreferenceRepository extends JpaRepository<UserCategoryPreference, Long> {
 
-    List<UserCategoryPreference> findByUserUserIdAndEnabledTrue(Long userId);
+    List<UserCategoryPreference> findByUserUserIdAndEnabledTrueAndCategoryEnabledTrue(Long userId);
 
     @Modifying
     @Transactional
