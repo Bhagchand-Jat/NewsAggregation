@@ -4,6 +4,7 @@ import com.news_aggregation_system.dto.*;
 import com.news_aggregation_system.response.ApiResponse;
 import com.news_aggregation_system.service.admin.CategoryService;
 import com.news_aggregation_system.service.news.NewsAggregationService;
+import com.news_aggregation_system.service.user.ArticleReadHistoryService;
 import com.news_aggregation_system.service.user.SavedArticleService;
 import com.news_aggregation_system.service.user.UserService;
 import jakarta.validation.Valid;
@@ -20,12 +21,14 @@ public class UserController {
     private final SavedArticleService savedArticleService;
     private final CategoryService categoryService;
     private final NewsAggregationService newsAggregationService;
+    private final ArticleReadHistoryService articleReadHistoryService;
 
-    public UserController(UserService userService, SavedArticleService savedArticleService, CategoryService categoryService, NewsAggregationService newsAggregationService) {
+    public UserController(UserService userService, SavedArticleService savedArticleService, CategoryService categoryService, NewsAggregationService newsAggregationService, ArticleReadHistoryService articleReadHistoryService) {
         this.userService = userService;
         this.savedArticleService = savedArticleService;
         this.categoryService = categoryService;
         this.newsAggregationService = newsAggregationService;
+        this.articleReadHistoryService = articleReadHistoryService;
     }
 
     @PutMapping("/{userId}")
@@ -91,6 +94,12 @@ public class UserController {
     public ResponseEntity<ApiResponse<List<ArticleReportDTO>>> getArticlesReports(@PathVariable Long userId) {
 
         return ResponseEntity.ok(ApiResponse.ok(newsAggregationService.getAllArticlesReportsByUserId(userId)));
+    }
+
+    @PostMapping("/{userId}/article/{articleId}/markAsRead")
+    public ResponseEntity<ApiResponse<Void>> updateReadArticleHistory(@PathVariable Long userId, @PathVariable Long articleId) {
+        articleReadHistoryService.markAsRead(userId, articleId);
+        return ResponseEntity.ok(ApiResponse.ok("Article read history updated successfully"));
     }
 
 }
