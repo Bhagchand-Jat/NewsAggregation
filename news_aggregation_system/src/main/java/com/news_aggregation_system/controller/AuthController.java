@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.news_aggregation_system.service.common.Constant.LOGIN_SUCCESS;
+import static com.news_aggregation_system.service.common.Constant.SIGNUP_SUCCESS;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -24,12 +27,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<UserDTO>> login(@Valid @RequestBody LoginRequest request) {
 
-        return ResponseEntity.ok(ApiResponse.ok("Login successful", authService.login(request)));
+        return ResponseEntity.ok(ApiResponse.ok(LOGIN_SUCCESS, authService.login(request)));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<UserDTO>> signUp(@Valid @RequestBody UserDTO userDTO) {
 
-        return ResponseEntity.ok(ApiResponse.ok("SignUp successful", authService.register(userDTO)));
+        return ResponseEntity.ok(ApiResponse.ok(SIGNUP_SUCCESS, authService.register(userDTO)));
     }
 }

@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Set;
 
-@Transactional
+import static com.news_aggregation_system.service.common.Constant.*;
+
 @Service
 public class ArticleReactionServiceImpl implements ArticleReactionService {
     private final ArticleReactionRepository reactionRepository;
@@ -34,9 +36,9 @@ public class ArticleReactionServiceImpl implements ArticleReactionService {
     @Transactional
     public ArticleReactionDTO reactToArticle(ArticleReactionDTO dto) {
         Article article = articleRepository.findById(dto.getArticleId())
-                .orElseThrow(() -> new NotFoundException("Article", "id: " + dto.getArticleId()));
+                .orElseThrow(() -> new NotFoundException(ARTICLE, ID + dto.getArticleId()));
         User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new NotFoundException("User", "id: " + dto.getUserId()));
+                .orElseThrow(() -> new NotFoundException(USER, ID + dto.getUserId()));
 
         Optional<ArticleReaction> existing = reactionRepository.findByUserUserIdAndArticleArticleId(user.getUserId(), article.getArticleId());
 
@@ -52,12 +54,7 @@ public class ArticleReactionServiceImpl implements ArticleReactionService {
     }
 
     @Override
-    public long countLikes(Long articleId) {
-        return reactionRepository.countByArticleArticleIdAndReactionType(articleId, ReactionType.LIKE);
-    }
-
-    @Override
-    public long countDislikes(Long articleId) {
-        return reactionRepository.countByArticleArticleIdAndReactionType(articleId, ReactionType.DISLIKE);
+    public Set<Long> getArticleIdsLikedByUser(Long userId) {
+        return reactionRepository.findArticleIdsLikedByUserUserId(userId);
     }
 }

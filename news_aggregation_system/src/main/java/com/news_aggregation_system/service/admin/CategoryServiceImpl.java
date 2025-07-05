@@ -6,6 +6,7 @@ import com.news_aggregation_system.exception.NotFoundException;
 import com.news_aggregation_system.mapper.CategoryMapper;
 import com.news_aggregation_system.model.Category;
 import com.news_aggregation_system.repository.CategoryRepository;
+import com.news_aggregation_system.service.common.Constant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Transactional
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
@@ -27,7 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO getById(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Category", "id: " + id));
+                .orElseThrow(() -> new NotFoundException(Constant.CATEGORY, Constant.ID + id));
         return CategoryMapper.toDto(category);
     }
 
@@ -47,6 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
                 });
     }
 
+    @Transactional
     @Override
     public Set<Category> getOrCreateCategories(Set<String> names) {
         Set<Category> categories = new HashSet<>();
@@ -57,33 +58,29 @@ public class CategoryServiceImpl implements CategoryService {
         return categories;
     }
 
+    @Transactional
     @Override
     public CategoryDTO create(CategoryDTO dto) {
         if (categoryRepository.existsByName(dto.getName())) {
-            throw new AlreadyExistsException("Category", "name: " + dto.getName());
+            throw new AlreadyExistsException(Constant.CATEGORY, Constant.NAME + dto.getName());
         }
         Category category = CategoryMapper.toEntity(dto);
         return CategoryMapper.toDto(categoryRepository.save(category));
     }
 
 
+    @Transactional
     @Override
     public CategoryDTO update(Long id, CategoryDTO dto) {
 
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        throw new UnsupportedOperationException(Constant.UNIMPLEMENTED_UPDATE);
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
 
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
-    }
-
-    @Override
-    public CategoryDTO getByCategoryName(String name) {
-        Category category = categoryRepository.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new NotFoundException("Category", "name: " + name));
-        return CategoryMapper.toDto(category);
+        throw new UnsupportedOperationException(Constant.UNIMPLEMENTED_DELETE);
     }
 
     @Override
@@ -92,11 +89,12 @@ public class CategoryServiceImpl implements CategoryService {
                 .toList();
     }
 
+    @Transactional
     @Override
     public void updateCategoryStatus(Long categoryId, boolean isEnabled) {
         int updated = categoryRepository.updateEnabledByCategoryId(isEnabled, categoryId);
         if (updated < 1) {
-            throw new NotFoundException("Category", "id: " + categoryId);
+            throw new NotFoundException(Constant.CATEGORY, Constant.ID + categoryId);
         }
     }
 

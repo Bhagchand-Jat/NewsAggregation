@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.news_aggregation_system.service.common.Constant.*;
+
 @Service
 @Transactional
 public class NotificationServiceImpl implements NotificationService {
@@ -93,7 +95,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     private Notification buildNotification(User user, Collection<ArticleDTO> matches) {
         StringBuilder body = new StringBuilder();
-        matches.forEach(a -> body.append("- ").append(a.getTitle()).append("\n")
+        matches.forEach(a -> body.append(DASH).append(a.getTitle()).append("\n")
                 .append("  ").append(a.getUrl()).append("\n\n"));
 
         Notification notification = new Notification();
@@ -105,13 +107,13 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private void sendEmail(String to, Collection<ArticleDTO> matches) {
-        String subject = "📰 " + matches.size() + " new article(s) for you";
-        String body = "Hi,\n\nHere are matching articles:\n\n" +
+        String subject = "📰 " + matches.size() + NEW_ARTICLES_FOR_YOU;
+        String body = MATCHING_ARTICLES +
                 matches.stream()
-                        .map(a -> "- " + a.getTitle() + "\n  " + a.getUrl())
+                        .map(article -> DASH + article.getTitle() + "\n  " + article.getUrl())
                         .collect(Collectors.joining("\n\n"))
                 +
-                "\n\n— News Aggregator";
+                NEWS_AGGREGATOR;
         emailService.sendEmail(to, subject, body);
     }
 

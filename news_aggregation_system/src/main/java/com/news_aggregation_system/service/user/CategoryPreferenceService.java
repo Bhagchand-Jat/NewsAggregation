@@ -1,6 +1,8 @@
 package com.news_aggregation_system.service.user;
 
 import com.news_aggregation_system.dto.CategoryStatusDTO;
+import com.news_aggregation_system.dto.UserCategoryPreferenceDTO;
+import com.news_aggregation_system.dto.UserKeywordPreferenceDTO;
 
 import java.util.List;
 import java.util.Set;
@@ -10,6 +12,8 @@ public interface CategoryPreferenceService {
     void enableCategoryForUser(Long userId, Long categoryId);
 
     void disableCategoryForUser(Long userId, Long categoryId);
+
+    List<UserCategoryPreferenceDTO> getAllEnabledCategoriesPreference(Long userId);
 
 
     List<CategoryStatusDTO> getEnabledCategoriesStatus(Long userId);
@@ -23,5 +27,7 @@ public interface CategoryPreferenceService {
     List<String> getEnabledKeywordsForCategory(Long userId, Long categoryId);
 
     void deleteKeywordFromCategory(Long userId, Long categoryId, String keywordName);
+
+    List<UserKeywordPreferenceDTO> getAllEnabledKeywordPreferences(Long userId);
 }
 

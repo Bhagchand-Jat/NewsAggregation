@@ -17,9 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-@Transactional
+import static com.news_aggregation_system.service.common.Constant.*;
+
 @Service
 public class SavedArticleServiceImpl implements SavedArticleService {
 
@@ -42,16 +44,17 @@ public class SavedArticleServiceImpl implements SavedArticleService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void saveArticle(SavedArticleDTO savedArticleDTO) {
         User user = userRepository.findById(savedArticleDTO.getUserId())
-                .orElseThrow(() -> new NotFoundException("User", "id: " + savedArticleDTO.getUserId()));
+                .orElseThrow(() -> new NotFoundException(USER, ID + savedArticleDTO.getUserId()));
 
         Article article = articleRepository.findById(savedArticleDTO.getArticleId())
-                .orElseThrow(() -> new NotFoundException("Article", "id: " + savedArticleDTO.getArticleId()));
+                .orElseThrow(() -> new NotFoundException(ARTICLE, ID + savedArticleDTO.getArticleId()));
         boolean isAlreadyExist = savedArticleRepository.existsSavedArticleByArticleArticleIdAndUserUserId(savedArticleDTO.getArticleId(), savedArticleDTO.getUserId());
         if (isAlreadyExist) {
-            throw new AlreadyExistsException("Article already saved for this user.");
+            throw new AlreadyExistsException(ARTICLE_ALREADY_SAVE_FOR_USER);
         }
         SavedArticle saved = SavedArticleMapper.toEntity(savedArticleDTO, user, article);
         saved.setId(new SavedArticleId(user.getUserId(), article.getArticleId()));
@@ -59,10 +62,16 @@ public class SavedArticleServiceImpl implements SavedArticleService {
         SavedArticleMapper.toDTO(savedArticleRepository.save(saved));
     }
 
+    @Transactional
     @Override
     public void deleteSavedArticle(Long userId, Long articleId) {
         SavedArticleId id = new SavedArticleId(userId, articleId);
         savedArticleRepository.deleteById(id);
+    }
+
+    @Override
+    public Set<Long> getArticleIdsSavedByUser(Long userId) {
+        return savedArticleRepository.findArticleIdsSavedByUser(userId);
     }
 
 

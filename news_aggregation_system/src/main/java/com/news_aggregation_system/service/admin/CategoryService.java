@@ -12,8 +12,6 @@ public interface CategoryService extends BaseService<CategoryDTO, Long> {
 
     Set<Category> getOrCreateCategories(Set<String> names);
 
-    CategoryDTO getByCategoryName(String name);
-
     List<CategoryDTO> getEnabledCategories();
 
     void updateCategoryStatus(Long categoryId, boolean isEnabled);

@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ArticleReportRepository extends JpaRepository<ArticleReport, Long> {
 
@@ -16,8 +15,6 @@ public interface ArticleReportRepository extends JpaRepository<ArticleReport, Lo
 
     List<ArticleReport> findArticleReportByArticleArticleId(Long articleId);
 
-
-    Optional<ArticleReport> findArticleReportByArticleArticleIdAndReportedByUserId(Long articleId, Long userId);
 
     List<ArticleReport> findArticleReportByReportedByUserId(Long userId);
 

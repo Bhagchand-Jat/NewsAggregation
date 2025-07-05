@@ -23,7 +23,6 @@ public class NotificationController {
             @RequestParam(defaultValue = "false", value = "isViewed") boolean isViewed) {
 
         return ResponseEntity.ok(ApiResponse.ok(
-                "Fetched notifications",
                 notificationService.getNotificationsByUserIdAndReadStatusAndUpdateMarkAsRead(userId, isViewed)));
     }
 
