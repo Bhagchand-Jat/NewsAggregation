@@ -17,7 +17,7 @@ public class ArticleMapper {
         dto.setPublishedAt(article.getPublishedAt());
         dto.setLikeCount(article.getLikeCount());
         dto.setDislikeCount(article.getDislikeCount());
-
+        dto.setReportCount(article.getReportCount());
         if (article.getCategories() != null) {
             dto.setCategories(article.getCategories());
         }

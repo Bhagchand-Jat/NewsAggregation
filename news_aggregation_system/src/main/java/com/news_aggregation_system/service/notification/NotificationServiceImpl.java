@@ -64,8 +64,8 @@ public class NotificationServiceImpl implements NotificationService {
         });
     }
 
-    @Override
-    public void createNotification(Notification notification) {
+
+    private void createNotification(Notification notification) {
         notification = notificationRepository.save(notification);
         NotificationMapper.toDto(notification);
     }

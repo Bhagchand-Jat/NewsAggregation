@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
 
-public class NotificationKeywordListRequest {
+public class KeywordListRequest {
     @NotEmpty(message = "Keywords list cannot be empty")
     List<@NotBlank(message = "Keyword cannot be blank") String> keywords;
 

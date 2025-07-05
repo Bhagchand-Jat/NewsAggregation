@@ -37,8 +37,8 @@ public class CategoryServiceImpl implements CategoryService {
                 .toList();
     }
 
-    @Override
-    public Category getOrCreateCategory(String name) {
+
+    private Category getOrCreateCategory(String name) {
         return categoryRepository.findByNameIgnoreCase(name.trim())
                 .orElseGet(() -> {
                     Category newCategory = new Category();

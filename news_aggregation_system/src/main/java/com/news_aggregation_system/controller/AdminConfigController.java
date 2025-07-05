@@ -15,10 +15,10 @@ public class AdminConfigController {
         this.configService = configService;
     }
 
-    @PatchMapping("/{id}/threshold")
-    public ResponseEntity<ApiResponse<Integer>> updateThreshold(@PathVariable("id") Long id, @RequestParam int newsThreshold) {
-        configService.updateThreshold(id, newsThreshold);
-        return ResponseEntity.ok(ApiResponse.ok("Threshold updated", newsThreshold));
+    @PatchMapping("/threshold")
+    public ResponseEntity<ApiResponse<Integer>> updateThreshold(@RequestParam("newThreshold") int newsThreshold) {
+        configService.updateThreshold(newsThreshold);
+        return ResponseEntity.ok(ApiResponse.ok("Threshold updated Successfully", newsThreshold));
     }
 
     @GetMapping("/threshold")

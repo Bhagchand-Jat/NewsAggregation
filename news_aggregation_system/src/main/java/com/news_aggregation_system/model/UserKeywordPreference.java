@@ -13,9 +13,11 @@ public class UserKeywordPreference {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @Column(nullable = false)

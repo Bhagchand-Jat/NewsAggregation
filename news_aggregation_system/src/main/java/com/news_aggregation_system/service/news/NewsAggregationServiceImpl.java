@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Transactional
 @Service
@@ -142,9 +141,14 @@ public class NewsAggregationServiceImpl implements NewsAggregationService {
 
         long count = articleReportRepository.countByArticleArticleId(articleId);
         long REPORT_THRESHOLD = systemConfigService.getCurrentReportThreshold();
-        if (count >= REPORT_THRESHOLD) {
-            updateArticleStatusById(articleId, true);
+        if (count > REPORT_THRESHOLD) {
+            updateArticleStatusById(articleId, false);
         }
+    }
+
+    @Override
+    public List<ArticleDTO> getAllReportedArticles() {
+        return articleReportRepository.getAllReportedArticles().stream().map(ArticleMapper::toDto).toList();
     }
 
     @Override
@@ -153,11 +157,6 @@ public class NewsAggregationServiceImpl implements NewsAggregationService {
                 .stream()
                 .map(ArticleReportMapper::toDTO)
                 .toList();
-    }
-
-    @Override
-    public Optional<ArticleReportDTO> getArticleReportByArticleIdAndUserId(Long articleId, Long userId) {
-        return Optional.ofNullable(articleReportRepository.findArticleReportByArticleArticleIdAndReportedByUserId(articleId, userId).map(ArticleReportMapper::toDTO).orElseThrow(() -> new NotFoundException("Article Report", "id: " + articleId)));
     }
 
     @Override

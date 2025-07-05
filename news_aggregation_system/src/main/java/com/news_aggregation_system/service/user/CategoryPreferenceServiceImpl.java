@@ -14,6 +14,7 @@ import com.news_aggregation_system.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
     }
 
     @Override
-    public void enableCategoryForUser(Long userId, Long categoryId, boolean enabled) {
+    public void enableCategoryForUser(Long userId, Long categoryId) {
 
         userCategoryPreferenceRepository.findByUserUserIdAndCategoryCategoryId(userId, categoryId).ifPresent(pref -> {
             throw new AlreadyExistsException(
@@ -80,20 +81,29 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
     @Override
     public List<CategoryStatusDTO> getEnabledCategoriesStatus(Long userId) {
 
-        return userCategoryPreferenceRepository.findByUserUserIdAndEnabledTrueAndCategoryEnabledTrue(
-                userId
-        ).stream().map(preference -> new CategoryStatusDTO(
-                preference.getCategory().getCategoryId(),
-                preference.getCategory().getName(),
-                preference.isEnabled())).toList();
+        List<Category> categories = categoryRepository.findByEnabledTrue();
 
+        Set<Long> enabledPreferenceCategoryIds = userCategoryPreferenceRepository
+                .findByUserUserIdAndEnabledTrueAndCategoryEnabledTrue(userId)
+                .stream()
+                .map(preference -> preference.getCategory().getCategoryId())
+                .collect(Collectors.toSet());
+
+        return categories.stream()
+                .map(category -> new CategoryStatusDTO(
+                        category.getCategoryId(),
+                        category.getName(),
+                        enabledPreferenceCategoryIds.contains(category.getCategoryId())
+                ))
+                .toList();
     }
+
 
     @Override
     public void addKeywordsToCategory(Long userId, Long categoryId, List<String> words) {
         User user = fetchUser(userId);
         Category category = fetchCategory(categoryId);
-
+        List<UserKeywordPreference> keywordPreferences = new ArrayList<>();
         for (String rawWord : words) {
             String word = rawWord.trim().toLowerCase();
             if (word.isBlank()) continue;
@@ -104,8 +114,9 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
             userKeywordPreference.setUser(user);
             userKeywordPreference.setCategory(category);
             userKeywordPreference.setKeyword(word);
-            userKeywordPreferenceRepository.save(userKeywordPreference);
+            keywordPreferences.add(userKeywordPreference);
         }
+        userKeywordPreferenceRepository.saveAll(keywordPreferences);
     }
 
     @Override
@@ -115,9 +126,9 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
     }
 
     @Override
-    public Set<String> getEnabledKeywordsForCategory(Long userId, Long categoryId) {
+    public List<String> getEnabledKeywordsForCategory(Long userId, Long categoryId) {
         return userKeywordPreferenceRepository.getEnabledKeywordsByUserIdAndCategoryId(userId, categoryId)
-                .stream().map(UserKeywordPreference::getKeyword).collect(Collectors.toSet());
+                .stream().map(UserKeywordPreference::getKeyword).collect(Collectors.toList());
     }
 
     @Override

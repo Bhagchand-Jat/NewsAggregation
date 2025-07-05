@@ -3,18 +3,11 @@ package com.news_aggregation_system.repository;
 import com.news_aggregation_system.model.UserKeywordPreference;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Set;
 
 public interface UserKeywordPreferenceRepository
         extends JpaRepository<UserKeywordPreference, Long> {
-
-    @Query("select lower(nk.keyword) from UserKeywordPreference nk " +
-            "where nk.user.userId = :userId and nk.category.categoryId = :categoryId")
-    Set<String> keywordsForCategory(@Param("userId") Long userId,
-                                    @Param("categoryId") Long categoryId);
 
     boolean existsByUserUserIdAndCategoryCategoryIdAndKeywordIgnoreCase(
             Long userId, Long categoryId, String keyword);

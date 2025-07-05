@@ -7,7 +7,7 @@ import java.util.Set;
 
 public interface CategoryPreferenceService {
 
-    void enableCategoryForUser(Long userId, Long categoryId, boolean enabled);
+    void enableCategoryForUser(Long userId, Long categoryId);
 
     void disableCategoryForUser(Long userId, Long categoryId);
 
@@ -20,7 +20,7 @@ public interface CategoryPreferenceService {
 
     Set<String> getEnabledKeywords(Long userId);
 
-    Set<String> getEnabledKeywordsForCategory(Long userId, Long categoryId);
+    List<String> getEnabledKeywordsForCategory(Long userId, Long categoryId);
 
     void deleteKeywordFromCategory(Long userId, Long categoryId, String keywordName);
 }

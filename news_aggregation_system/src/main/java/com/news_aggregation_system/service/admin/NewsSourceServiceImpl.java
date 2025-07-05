@@ -62,14 +62,6 @@ public class NewsSourceServiceImpl implements NewsSourceService {
     }
 
     @Override
-    public List<NewsSourceDTO> findAllByEnabled() {
-        return newsSourceRepository.findByEnabledTrue()
-                .stream()
-                .map(NewsSourceMapper::toDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public List<NewsSourceDTO> getAllByEnabledAndUpdateLastModified() {
         List<NewsSource> newsSources = newsSourceRepository.findByEnabledTrue();
         for (NewsSource newsSource : newsSources) {

@@ -80,13 +80,6 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    @Override
-    public UserDTO getByEmail(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User", "email: " + email));
-        return UserMapper.toDto(user);
-    }
-
     private void validateEmailUniqueness(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new AlreadyExistsException("User", "Email: " + email);
