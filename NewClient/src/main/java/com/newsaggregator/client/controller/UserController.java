@@ -74,7 +74,7 @@ public class UserController {
 
     private void headlinesMenu() {
         switch (promptChoice(HeadlineMenu.values(), CHOOSE_OPTION_BELOW)) {
-            case TODAY -> showHeadlines(newsService.todayNewsArticles());
+            case TODAY -> showHeadlines(newsService.todayNewsArticles(session.getUserId()));
             case DATE_RANGE -> dateRangeHeadlinesMenu();
             case BACK -> {
             }
@@ -110,7 +110,7 @@ public class UserController {
             if (choice == 0 || invalidIndex(choice, categories.size())) return;
 
             CategoryDTO categoryDTO = categories.get(choice - 1);
-            showHeadlines(newsService.fetchHeadlines(from, to, categoryDTO.getCategoryId()));
+            showHeadlines(newsService.fetchHeadlines(from, to, categoryDTO.getCategoryId(), session.getUserId()));
 
         } catch (Exception e) {
             System.out.println(INVALID_DATE_FORMAT);
@@ -125,7 +125,7 @@ public class UserController {
     private void searchArticlesMenu() {
         String query = ConsoleUtils.readLine(SEARCH_QUERY_PROMPT);
         System.out.printf("%n%s '%s'%n", SEARCH_ARTICLES, query);
-        displayArticles(newsService.searchArticles(query), this::searchArticleActions);
+        displayArticles(newsService.searchArticles(query, session.getUserId()), this::searchArticleActions);
     }
 
 

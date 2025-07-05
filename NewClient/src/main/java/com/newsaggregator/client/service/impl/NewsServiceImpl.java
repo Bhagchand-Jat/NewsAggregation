@@ -16,9 +16,9 @@ import static com.newsaggregator.client.util.Constant.*;
 public class NewsServiceImpl extends BaseService implements NewsService {
 
     @Override
-    public List<ArticleDTO> fetchHeadlines(Date from, Date to, Long categoryId) {
+    public List<ArticleDTO> fetchHeadlines(Date from, Date to, Long categoryId,Long userId) {
         ArticleFilterRequestDTO filterRequestDTO = new ArticleFilterRequestDTO(categoryId, to, from);
-        return safePostList(Constant.API_NEWS_FILTER, filterRequestDTO, new TypeReference<>() {
+        return safePostList(Constant.API_NEWS_FILTER.replace(USER_ID,userId.toString()), filterRequestDTO, new TypeReference<>() {
         });
     }
 
@@ -45,10 +45,10 @@ public class NewsServiceImpl extends BaseService implements NewsService {
     }
 
     @Override
-    public List<ArticleDTO> searchArticles(String query) {
+    public List<ArticleDTO> searchArticles(String query,Long userId) {
 
         ArticleFilterRequestDTO filterRequestDTO = new ArticleFilterRequestDTO(query);
-        return safePostList(API_NEWS_FILTER, filterRequestDTO, new TypeReference<>() {
+        return safePostList(API_NEWS_FILTER.replace(USER_ID,userId.toString()), filterRequestDTO, new TypeReference<>() {
         });
     }
 
@@ -59,11 +59,11 @@ public class NewsServiceImpl extends BaseService implements NewsService {
     }
 
     @Override
-    public List<ArticleDTO> todayNewsArticles() {
+    public List<ArticleDTO> todayNewsArticles(Long userId) {
 
         Date today = new Date(System.currentTimeMillis());
         ArticleFilterRequestDTO filterRequestDTO = new ArticleFilterRequestDTO(today);
-        return safePostList(Constant.API_NEWS_FILTER, filterRequestDTO, new TypeReference<>() {
+        return safePostList(Constant.API_NEWS_FILTER.replace(USER_ID,userId.toString()), filterRequestDTO, new TypeReference<>() {
         });
     }
 
