@@ -40,20 +40,24 @@ public final class UiText {
     public static final String CATEGORIES_HEADER = "List of Categories:";
     public static final String ARTICLES_HEADER = "List of All News Articles:";
     // === Admin Prompts ===
-    public static final String NEWS_SOURCE_ID_PROMPT = "News Source ID (0 to cancel): ";
+    public static final String NEWS_SOURCE_ID_PROMPT = "Enter News Source ID to update Api Key (0 to cancel): ";
     public static final String NEW_API_KEY_PROMPT = "New API Key: ";
     public static final String NEW_CATEGORY_NAME_PROMPT = "Enter New Category Name: ";
     public static final String CATEGORY_ID_TOGGLE_PROMPT = "Enter Category ID to update Status (0 to cancel): ";
-    public static final String ENABLE_CATEGORY_PROMPT = "Enable this category? (y/n): ";
-    public static final String ARTICLE_ID_UPDATE_PROMPT = "Enter Article ID to update Status (0 to cancel): ";
-    public static final String ENABLE_ARTICLE_PROMPT = "Enable this article? (y/n): ";
+    public static final String ENABLE_CATEGORY_PROMPT = "Enable this category? (y for yes or other key for no): ";
+    public static final String ENABLE_KEYWORD_PROMPT = "Enable this Keyword? (y for yes or other key for no): ";
+    public static final String ARTICLE_INDEX_UPDATE_PROMPT = "Enter Article Index to update Status (0 to cancel): ";
+    public static final String ENABLE_ARTICLE_PROMPT = "Enable this article? (y for yes or other key for no): ";
+    public static final String REPORT_THRESHOLD_PROMPT = "Enter article reports threshold: ";
+
     // === Admin Constants ===
     public static final String LAST_ACCESSED = "Last accessed:";
     public static final String API_KEY = "API key:";
     // === Admin Errors ===
     public static final String NO_SOURCES = "No news sources available.";
-    public static final String NO_CATEGORIES = "No categories found.";
     public static final String NO_ARTICLES = "No articles found.";
+    public static final String NO_CATEGORIES = "No categories found.";
+    public static final String NO_KEYWORDS = "No keywords found.";
     public static final String NO_REPORTS = "No Reports found.";
 
     // === User Headers ===
@@ -65,19 +69,14 @@ public final class UiText {
     // === User Prompts ===
     public static final String ENTER_KEYWORDS = "Enter keywords (comma separated): ";
     public static final String REPORT_REASON_PROMPT = "Enter report message: ";
-    public static final String ARTICLE_INDEX_PROMPT = "Enter article index (or 0 to cancel): ";
     public static final String SELECT_CATEGORY_INDEX_TO_SHOW_HEADINGS = "Select Category Index to show Articles(or 0 to cancel  ): ";
-    public static final String DELETE_ARTICLE_INDEX_PROMPT = "Enter index of article to delete (or 0 to cancel): ";
-    public static final String SHOW_ARTICLE_INDEX_PROMPT = "Enter index of article to view (or 0 to cancel): ";
-    public static final String LIKE_ARTICLE_PROMPT = "Enter article index to like: ";
-    public static final String DISLIKE_ARTICLE_PROMPT = "Enter article index to dislike: ";
     public static final String SEARCH_QUERY_PROMPT = "Enter search query: ";
     public static final String DATE_RANGE_PROMPT = "Enter date range in format dd-MM-yyyy:dd-MM-yyyy: ";
     public static final String CATEGORY_UPDATE_PROMPT = "Update your %s category preference: ";
     // === User Errors ===
     public static final String NO_SAVED_ARTICLES = "No saved articles available.";
     public static final String NO_NOTIFICATIONS = "No notifications available.";
-    public static final String NO_RESULTS_FOUND = "No results found.";
+    public static final String NO_ARTICLE_HISTORY = "No Articles History available.";
     public static final String VIEW_LIST_EXTERNAL_SOURCES_STATUS = "View the list of external servers and status";
     public static final String VIEW_LIST_EXTERNAL_SOURCE_DETAILS = "View the external server’s details";
     public static final String UPDATE_NEWS_SOURCE_API_KEY = "Update/Edit the external server’s details";
@@ -91,15 +90,30 @@ public final class UiText {
     public static final String SEARCH_ARTICLES = "Search Articles";
     public static final String VIEW_SAVED_ARTICLES = "View Saved Articles";
     public static final String VIEW_HEADLINES = "View Headlines";
-    public static final String FOR_HEADLINES = "for Headlines";
 
     public static final String DATE_RANGE = "Date Range";
     public static final String TODAY = "Today";
     public static final String LOGOUT = "Logout";
     public static final String SAVED_ARTICLE_DELETED_SUCCESS = "Saved article deleted successfully";
-    public static final String SELECT_ONE_ARTICLE_OR_BACK_OPTION = "Select one Article to Perform Operations (or 0 for Back)";
+    public static final String SELECT_ONE_ARTICLE_OR_BACK_OPTION = "Select one Article to Perform Operations (or 0 for Back): ";
+    public static final String SELECT_ONE_CATEGORY_OR_BACK_OPTION = "Select one Category to Perform Operations (or 0 for Back): ";
+    public static final String SELECT_ONE_ARTICLE_TO_SHOW_REASONS_OR_BACK_OPTION = "Select one Article to Show Reasons (or 0 for Back): ";
     public static final String SOMETHING_WENT_WRONG = "Something went wrong";
     public static final String CATEGORY_DISABLE_SUCCESS = "Category Disabled Successfully";
+    public static final String ARTICLES_READ_HISTORY = "View Articles Read History";
+    public static final String VIEW_ARTICLE_REPORT_THRESHOLD = "View Article Report Threshold";
+    public static final String UPDATE_ARTICLE_REPORT_THRESHOLD = "Update Article Report Threshold";
+    public static final String VIEW_REPORTED_ARTICLES = "View Reported Articles";
+    public static final String TOTAL_REPORT = " Total Reports: ";
+    public static final String DISLIKES = " DisLikes: ";
+    public static final String LIKES = "Likes: ";
+    public static final String DELETE_KEYWORD_FROM_CATEGORY = "Delete Keyword from Category";
+    public static final String UPDATE_KEYWORD_STATUS = "Update Keyword Status";
+    public static final String ENTER_KEYWORD_TO_DELETE = "Enter Keyword Name to Delete from Category: ";
+    public static final String ENTER_KEYWORD_TO_UPDATE = "Enter  Keyword Name to Update Status: ";
+    public static final String VIEW_KEYWORDS = "View Keywords";
+    public static final String NO_KEYWORD_INPUT = "No keyword entered.";
+
 
     private UiText() {
     }

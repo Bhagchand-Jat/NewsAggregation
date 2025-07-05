@@ -1,21 +1,18 @@
-package com.newsaggregator.client.dto;
+package com.newsaggregator.client.model;
 
-public class KeywordDTO {
+
+public class Keyword {
+
     private Long keywordId;
 
     private String name;
 
-    private Long userId;
-
     private boolean enabled = true;
-    private Long categoryId;
 
-    public KeywordDTO() {
-    }
+    private Category category;
 
-    public KeywordDTO(String name, Long userId) {
-        this.name = name;
-        this.userId = userId;
+
+    public Keyword() {
     }
 
     public Long getKeywordId() {
@@ -34,14 +31,6 @@ public class KeywordDTO {
         this.name = name;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
     public boolean isEnabled() {
         return enabled;
     }
@@ -50,11 +39,12 @@ public class KeywordDTO {
         this.enabled = enabled;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }
+

@@ -12,6 +12,19 @@ import java.util.Map;
 
 public abstract class BaseService {
 
+    protected <T> T safeGet(String url, TypeReference<T> type) {
+        try {
+            ApiResponse<T> response = HttpUtil.getForDto(url, type);
+            if (response.isSuccess()) return response.getData();
+            System.out.println("Error: " + response.getMessage());
+        } catch (HttpStatusCodeException exception) {
+            handleError(exception);
+        } catch (Exception exception) {
+            System.out.println("\n" + UiText.SOMETHING_WENT_WRONG + "\n");
+        }
+        return null;
+    }
+
     protected <T> T safePost(String url, Object body, TypeReference<T> type) {
         try {
             ApiResponse<T> response = HttpUtil.postForDto(url, body, type);
@@ -20,7 +33,6 @@ public abstract class BaseService {
         } catch (HttpStatusCodeException exception) {
             handleError(exception);
         } catch (Exception exception) {
-            System.out.println("\n" + exception.getMessage() + "\n");
             System.out.println("\n" + UiText.SOMETHING_WENT_WRONG + "\n");
         }
         return null;
@@ -73,7 +85,6 @@ public abstract class BaseService {
         } catch (HttpStatusCodeException exception) {
             handleError(exception);
         } catch (Exception exception) {
-            System.out.println("\n" + exception.getMessage() + "\n");
             System.out.println("\n" + UiText.SOMETHING_WENT_WRONG + "\n");
         }
         return null;
