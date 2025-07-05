@@ -12,9 +12,7 @@ public interface NotificationService {
 
     void sendNotificationsForNewArticles(List<ArticleDTO> newArticles);
 
-    void createNotification(Notification notification);
+    NotificationDTO createNotification(Notification notification);
 
     void deleteByIsViewedTrueAndReadAtBefore(Date date);
-
-
 }

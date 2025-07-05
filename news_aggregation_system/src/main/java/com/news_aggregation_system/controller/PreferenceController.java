@@ -1,16 +1,15 @@
 package com.news_aggregation_system.controller;
 
 import com.news_aggregation_system.dto.CategoryStatusDTO;
-import com.news_aggregation_system.dto.NotificationKeywordListRequest;
+import com.news_aggregation_system.dto.KeywordDTO;
 import com.news_aggregation_system.response.ApiResponse;
 import com.news_aggregation_system.service.user.CategoryPreferenceService;
+import com.news_aggregation_system.service.user.KeywordService;
 import jakarta.validation.Valid;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 
 @RestController
@@ -18,40 +17,41 @@ import java.util.Set;
 public class PreferenceController {
 
     private final CategoryPreferenceService categoryPreferenceService;
+    private final KeywordService keywordService;
 
 
-    public PreferenceController(CategoryPreferenceService categoryPreferenceService) {
+    public PreferenceController(CategoryPreferenceService categoryPreferenceService, KeywordService keywordService) {
         this.categoryPreferenceService = categoryPreferenceService;
-
+        this.keywordService = keywordService;
     }
 
 
     @PostMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<Void>> enableCategoryPreference(
             @PathVariable Long userId, @PathVariable Long categoryId) {
-        categoryPreferenceService.enableCategoryForUser(userId, categoryId, true);
+        categoryPreferenceService.createPreference(userId, categoryId, true);
         return ResponseEntity.ok(ApiResponse.ok("Category enabled"));
     }
 
     @DeleteMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<Void>> disableCategoryPreference(
             @PathVariable Long userId, @PathVariable Long categoryId) {
-        categoryPreferenceService.disableCategoryForUser(userId, categoryId);
+        categoryPreferenceService.deletePreference(userId, categoryId);
         return ResponseEntity.ok(ApiResponse.ok("Category disabled"));
     }
 
 
-    @PostMapping("/categories/{categoryId}/keywords")
-    public ResponseEntity<ApiResponse<Void>> addKeywordsToCategory(
-            @PathVariable Long userId, @PathVariable Long categoryId, @Valid @RequestBody NotificationKeywordListRequest request) {
-        categoryPreferenceService.addKeywordsToCategory(userId, categoryId, request.getKeywords());
-        return ResponseEntity.ok(ApiResponse.ok("Keyword Added successfully"));
+    @PostMapping("/keywords")
+    public ResponseEntity<ApiResponse<KeywordDTO>> addKeyword(
+            @PathVariable Long userId, @Valid @RequestBody KeywordDTO dto) {
+        KeywordDTO keywordDTO = keywordService.creteKeyword(userId, dto);
+        return ResponseEntity.ok(new ApiResponse<>("Keyword Added successfully", true, keywordDTO));
     }
 
-    @DeleteMapping("/categories/{categoryId}/keywords")
+    @DeleteMapping("/keywords/{keywordId}")
     public ResponseEntity<ApiResponse<Void>> deleteKeyword(
-            @PathVariable Long userId, @PathVariable Long categoryId, @Param("keyword") String keyword) {
-        categoryPreferenceService.deleteKeywordFromCategory(userId, categoryId, keyword);
+            @PathVariable Long userId, @PathVariable Long keywordId) {
+        keywordService.deleteKeywordByIdAndUserId(userId, keywordId);
         return ResponseEntity.ok(ApiResponse.ok("Keyword deleted Successfully"));
     }
 
@@ -59,15 +59,4 @@ public class PreferenceController {
     public ResponseEntity<ApiResponse<List<CategoryStatusDTO>>> getAllEnabledCategoriesWithStatus(@PathVariable Long userId) {
         return ResponseEntity.ok(ApiResponse.ok(categoryPreferenceService.getEnabledCategoriesStatus(userId)));
     }
-
-    @GetMapping("/categories/{categoryId}/keywords")
-    public ResponseEntity<ApiResponse<Set<String>>> getAllEnabledKeywordsForCategory(@PathVariable Long userId, @PathVariable Long categoryId) {
-        return ResponseEntity.ok(ApiResponse.ok(categoryPreferenceService.getEnabledKeywordsForCategory(userId, categoryId)));
-    }
-
-    @GetMapping("/keywords")
-    public ResponseEntity<ApiResponse<Set<String>>> getAllEnabledKeywords(@PathVariable Long userId) {
-        return ResponseEntity.ok(ApiResponse.ok(categoryPreferenceService.getEnabledKeywords(userId)));
-    }
-
 }

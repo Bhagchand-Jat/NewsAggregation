@@ -4,6 +4,7 @@ import com.news_aggregation_system.dto.UserDTO;
 import com.news_aggregation_system.exception.AlreadyExistsException;
 import com.news_aggregation_system.exception.NotFoundException;
 import com.news_aggregation_system.mapper.UserMapper;
+import com.news_aggregation_system.model.NotificationConfig;
 import com.news_aggregation_system.model.Role;
 import com.news_aggregation_system.model.User;
 import com.news_aggregation_system.repository.RoleRepository;
@@ -36,9 +37,12 @@ public class UserServiceImpl implements UserService {
 
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         userDTO.setPassword(encodedPassword);
-        Role role = getRoleByRoleNameOrThrow();
+        Role role = getRoleByRoleNameOrThrow(Constant.USER_ROLE);
         userDTO.setRole(role);
         User user = UserMapper.toEntity(userDTO);
+        NotificationConfig config = new NotificationConfig();
+        config.setUser(user);
+        user.setNotificationConfig(config);
         User savedUser = userRepository.save(user);
 
         return UserMapper.toDto(savedUser);
@@ -98,9 +102,9 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException("User", "id: " + id));
     }
 
-    private Role getRoleByRoleNameOrThrow() {
-        return roleRepository.findByRole(Constant.USER_ROLE)
-                .orElseThrow(() -> new NotFoundException("Role", "name: " + Constant.USER_ROLE));
+    private Role getRoleByRoleNameOrThrow(String role) {
+        return roleRepository.findByRole(role)
+                .orElseThrow(() -> new NotFoundException("Role", "name: " + role));
     }
 
     private boolean isNotEmpty(String value) {

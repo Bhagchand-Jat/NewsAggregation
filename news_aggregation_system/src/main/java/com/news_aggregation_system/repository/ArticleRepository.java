@@ -1,7 +1,6 @@
 package com.news_aggregation_system.repository;
 
 import com.news_aggregation_system.model.Article;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("""
@@ -69,20 +67,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> getArticlesByDateRangeAndCategory(@Param("from") Date from,
                                                     @Param("to") Date to,
                                                     @Param("categoryId") Long categoryId);
-
-    @Query("""
-            select distinct a from Article a
-            where a.articleId not in :alreadyRead
-              and (
-                  lower(a.title)       like %:kw%
-               or lower(a.description) like %:kw%
-               or lower(a.content)     like %:kw%
-              )
-            order by a.publishedAt desc
-            """)
-    List<Article> searchByKeyword(@Param("kw") String keyword,
-                                  @Param("alreadyRead") Set<Long> alreadyRead,
-                                  Pageable pageable);
 
 
 }
