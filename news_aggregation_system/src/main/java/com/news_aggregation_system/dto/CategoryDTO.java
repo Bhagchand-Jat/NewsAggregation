@@ -3,6 +3,7 @@ package com.news_aggregation_system.dto;
 import com.news_aggregation_system.model.Keyword;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class CategoryDTO {
@@ -13,7 +14,7 @@ public class CategoryDTO {
 
     private boolean enabled = true;
 
-    private Set<Keyword> keywords;
+    private Set<Keyword> keywords = new HashSet<>();
 
 
     public CategoryDTO() {

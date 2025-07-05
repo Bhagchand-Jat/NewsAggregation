@@ -1,7 +1,7 @@
 package com.news_aggregation_system.controller;
 
 import com.news_aggregation_system.dto.CategoryStatusDTO;
-import com.news_aggregation_system.dto.NotificationKeywordListRequest;
+import com.news_aggregation_system.dto.KeywordListRequest;
 import com.news_aggregation_system.response.ApiResponse;
 import com.news_aggregation_system.service.user.CategoryPreferenceService;
 import jakarta.validation.Valid;
@@ -29,7 +29,7 @@ public class PreferenceController {
     @PostMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<Void>> enableCategoryPreference(
             @PathVariable Long userId, @PathVariable Long categoryId) {
-        categoryPreferenceService.enableCategoryForUser(userId, categoryId, true);
+        categoryPreferenceService.enableCategoryForUser(userId, categoryId);
         return ResponseEntity.ok(ApiResponse.ok("Category enabled"));
     }
 
@@ -43,7 +43,7 @@ public class PreferenceController {
 
     @PostMapping("/categories/{categoryId}/keywords")
     public ResponseEntity<ApiResponse<Void>> addKeywordsToCategory(
-            @PathVariable Long userId, @PathVariable Long categoryId, @Valid @RequestBody NotificationKeywordListRequest request) {
+            @PathVariable Long userId, @PathVariable Long categoryId, @Valid @RequestBody KeywordListRequest request) {
         categoryPreferenceService.addKeywordsToCategory(userId, categoryId, request.getKeywords());
         return ResponseEntity.ok(ApiResponse.ok("Keyword Added successfully"));
     }
@@ -61,7 +61,7 @@ public class PreferenceController {
     }
 
     @GetMapping("/categories/{categoryId}/keywords")
-    public ResponseEntity<ApiResponse<Set<String>>> getAllEnabledKeywordsForCategory(@PathVariable Long userId, @PathVariable Long categoryId) {
+    public ResponseEntity<ApiResponse<List<String>>> getAllEnabledKeywordsForCategory(@PathVariable Long userId, @PathVariable Long categoryId) {
         return ResponseEntity.ok(ApiResponse.ok(categoryPreferenceService.getEnabledKeywordsForCategory(userId, categoryId)));
     }
 

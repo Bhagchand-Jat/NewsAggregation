@@ -31,6 +31,7 @@ public class ArticleDTO {
     private int likeCount;
     private int dislikeCount;
 
+    private int reportCount;
 
     private Date publishedAt;
     private Set<Category> categories = new HashSet<>();
@@ -110,6 +111,14 @@ public class ArticleDTO {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public int getReportCount() {
+        return reportCount;
+    }
+
+    public void setReportCount(int reportCount) {
+        this.reportCount = reportCount;
     }
 
     public int getLikeCount() {

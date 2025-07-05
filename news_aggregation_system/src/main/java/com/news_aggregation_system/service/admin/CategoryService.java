@@ -9,7 +9,6 @@ import java.util.Set;
 
 public interface CategoryService extends BaseService<CategoryDTO, Long> {
 
-    Category getOrCreateCategory(String name);
 
     Set<Category> getOrCreateCategories(Set<String> names);
 

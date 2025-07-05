@@ -13,8 +13,6 @@ public class SystemConfig {
     @Column(name = "report_threshold", nullable = false)
     private int reportThreshold;
 
-    // Add more config fields as needed later
-
     public Long getId() {
         return id;
     }

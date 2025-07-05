@@ -97,9 +97,14 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/article/{articleId}/markAsRead")
-    public ResponseEntity<ApiResponse<Void>> updateReadArticleHistory(@PathVariable Long userId, @PathVariable Long articleId) {
+    public ResponseEntity<ApiResponse<Void>> createReadArticleHistory(@PathVariable Long userId, @PathVariable Long articleId) {
         articleReadHistoryService.markAsRead(userId, articleId);
         return ResponseEntity.ok(ApiResponse.ok("Article read history updated successfully"));
+    }
+
+    @GetMapping("/{userId}/articles-read-history")
+    public ResponseEntity<ApiResponse<List<ArticleReadHistoryDTO>>> getArticlesReadHistory(@PathVariable Long userId) {
+        return ResponseEntity.ok(ApiResponse.ok(articleReadHistoryService.getArticleReadHistory(userId)));
     }
 
 }

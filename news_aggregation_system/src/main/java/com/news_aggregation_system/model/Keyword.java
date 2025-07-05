@@ -18,7 +18,7 @@ public class Keyword {
     private boolean enabled = true;
 
     @ManyToOne
-    @JoinColumn(name = "categoryId")
+    @JoinColumn(name = "category_id")
     private Category category;
 
 

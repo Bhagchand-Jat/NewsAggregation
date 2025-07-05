@@ -84,5 +84,12 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
                                   @Param("alreadyRead") Set<Long> alreadyRead,
                                   Pageable pageable);
 
+    @Query("""
+               SELECT a
+               FROM Article a
+               WHERE a.enabled = true
+                 AND (SELECT COUNT(r) FROM ArticleReport r WHERE r.article = a) >= :threshold
+            """)
+    List<Article> findMaxThresholdAndEnabledArticles(@Param("threshold") int threshold);
 
 }

@@ -2,6 +2,7 @@ package com.news_aggregation_system.repository;
 
 import com.news_aggregation_system.model.ArticleReadHistory;
 import com.news_aggregation_system.model.Category;
+import com.news_aggregation_system.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +26,6 @@ public interface ArticleReadHistoryRepository extends JpaRepository<ArticleReadH
 
     @Query("select h.article.articleId from ArticleReadHistory h where h.user.userId = :userId")
     Set<Long> idsOfReadArticles(@Param("userId") Long userId);
+
+    Long user(User user);
 }

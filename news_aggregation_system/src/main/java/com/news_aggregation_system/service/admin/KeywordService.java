@@ -8,10 +8,16 @@ public interface KeywordService {
 
     KeywordDTO creteKeyword(KeywordDTO keywordDTO);
 
-    void deleteKeywordById(Long keywordId);
+    void deleteKeywordByCategoryIdAndKeywordId(Long categoryId, Long keywordId);
+
+    void deleteKeywordByCategoryIdAndKeywordName(Long categoryId, String keywordName);
 
     List<KeywordDTO> getAllKeywordsByCategory(Long categoryId);
 
-    void updateKeywordStatus(Long keywordId, boolean enabled);
+    void updateKeywordStatus(Long categoryId, Long keywordId, boolean enabled);
+
+    void updateKeywordStatus(Long categoryId, String keywordName, boolean enabled);
+
+    void addKeywordsToCategory(Long categoryId, List<String> keywords);
 
 }

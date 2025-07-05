@@ -21,7 +21,7 @@ public class NewsFetchScheduler {
         this.notificationService = notificationService;
     }
 
-    @Scheduled(cron = "0 0/30 * * * ?")
+    @Scheduled(cron = "0 0  0/3 * * ?")
     public void fetchArticlesFromSourcesAndSaveToDatabaseAndSendNotificationToUsers() {
 
         List<ArticleDTO> articles = newsAggregationService.fetchExternalNews();

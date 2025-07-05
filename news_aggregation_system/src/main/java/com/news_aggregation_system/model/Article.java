@@ -43,6 +43,9 @@ public class Article {
     @Formula("(SELECT COUNT(*) FROM article_reactions ar WHERE ar.article_id = article_id AND ar.reaction_type = 'DISLIKE')")
     private int dislikeCount;
 
+    @Formula("(SELECT COUNT(*) FROM article_reports ar WHERE ar.article_id = article_id)")
+    private int reportCount;
+
     @ManyToMany
     @JoinTable(name = "article_categories", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories = new HashSet<>();
@@ -147,5 +150,13 @@ public class Article {
 
     public void setReactions(Set<ArticleReaction> reactions) {
         this.reactions = reactions;
+    }
+
+    public int getReportCount() {
+        return reportCount;
+    }
+
+    public void setReportCount(int reportCount) {
+        this.reportCount = reportCount;
     }
 }
