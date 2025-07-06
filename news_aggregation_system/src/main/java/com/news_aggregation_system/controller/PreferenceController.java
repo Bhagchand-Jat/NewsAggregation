@@ -47,7 +47,7 @@ public class PreferenceController {
     public ResponseEntity<ApiResponse<Void>> addKeywordsToCategory(
             @PathVariable Long userId, @PathVariable Long categoryId, @Valid @RequestBody KeywordListRequest request) {
         categoryPreferenceService.addKeywordsToCategory(userId, categoryId, request.getKeywords());
-        return ResponseEntity.ok(ApiResponse.ok(KEYWORD_ADDED_SUCCESS));
+        return ResponseEntity.ok(ApiResponse.ok(KEYWORDS_ADDED_SUCCESS));
     }
 
     @DeleteMapping("/categories/{categoryId}/keywords")

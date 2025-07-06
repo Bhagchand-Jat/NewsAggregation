@@ -43,7 +43,7 @@ public class Constant {
     public static final String USER_UPDATED_SUCCESS = "User updated successfully";
     public static final String CATEGORY_ENABLED_SUCCESS = "Category enabled Successfully";
     public static final String CATEGORY_DISABLED_SUCCESS = "Category disabled  Successfully";
-    public static final String KEYWORD_ADDED_SUCCESS = "Keyword Added successfully";
+    public static final String KEYWORDS_ADDED_SUCCESS = "Keywords Added successfully";
     public static final String LOGIN_SUCCESS = "Login successfully";
     public static final String SIGNUP_SUCCESS = "SignUp successfully";
     public static final String ARTICLE_LIKED_SUCCESS = "Article liked successfully";
