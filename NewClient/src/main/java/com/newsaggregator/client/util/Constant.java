@@ -16,7 +16,7 @@ public class Constant {
         public static final SimpleDateFormat  simpleDateFormatter = new SimpleDateFormat("dd-MMM-yyyy");
 
         // ─── Placeholder Tokens ──────────────────────────────────
-        public static final String USER_ID       = "{userId}";
+        public static final String USER_ID = "me";
         public static final String ARTICLE_ID    = "{articleId}";
         public static final String CATEGORY_ID   = "{categoryId}";
     public static final String NEWS_SOURCE_ID= "{newsSourceId}";
@@ -27,30 +27,33 @@ public class Constant {
         public static final String IS_ENABLED    = "isEnabled";
         public static final String NEW_THRESHOLD = "newThreshold";
 
-        // ─── Base URL ────────────────────────────────────────────
+
+    // ─── Base URL ────────────────────────────────────────────
         private static final String BASE_URL = "http://localhost:8080/api";
 
         // ─── Auth Endpoints ──────────────────────────────────────
         public static final String LOGIN_URL     = BASE_URL + "/auth/login";
         public static final String SIGNUP_URL    = BASE_URL + "/auth/signup";
+    public static final String REFRESH_URL = BASE_URL + "/auth/refresh";
 
-    public static final String API_USERS_SAVED_ARTICLES           = BASE_URL + "/users/{userId}/saved-articles";
+    public static final String API_USER = BASE_URL + "/user-details/me";
+    public static final String API_USERS_SAVED_ARTICLES = BASE_URL + "/users/me/saved-articles";
         public static final String API_USERS_SAVE_ARTICLE             = BASE_URL + "/users/save-article";
-        public static final String API_USERS_DELETE_SAVED_ARTICLE     = BASE_URL + "/users/{userId}/saved-article/{articleId}";
+    public static final String API_USERS_DELETE_SAVED_ARTICLE = BASE_URL + "/users/me/saved-article/{articleId}";
         public static final String API_USERS_REPORT_ARTICLE           = BASE_URL + "/users/report-article";
-        public static final String API_USERS_REPORTS                  = BASE_URL + "/users/{userId}/articles-reports";
+    public static final String API_USERS_REPORTS = BASE_URL + "/users/me/articles-reports";
         public static final String API_USERS_CATEGORIES_ENABLED       = BASE_URL + "/users/categories/enabled";
-        public static final String API_USERS_MARK_ARTICLE_AS_READ     = BASE_URL + "/users/{userId}/article/{articleId}/markAsRead";
-        public static final String API_USERS_ARTICLES_READ_HISTORY    = BASE_URL + "/users/{userId}/articles-read-history";
+    public static final String API_USERS_MARK_ARTICLE_AS_READ = BASE_URL + "/users/me/article/{articleId}/markAsRead";
+    public static final String API_USERS_ARTICLES_READ_HISTORY = BASE_URL + "/users/me/articles-read-history";
 
         // ─── Notification Preferences ─────────────────────────────
-        public static final String API_USERS_NOTIFICATIONS_PREFERENCES_CATEGORIES        = BASE_URL + "/users/{userId}/notifications/preferences/categories/{categoryId}";
-        public static final String API_USERS_NOTIFICATIONS_PREFERENCES_CATEGORIES_LIST   = BASE_URL + "/users/{userId}/notifications/preferences/categories";
-        public static final String API_USERS_NOTIFICATIONS_PREFERENCES_KEYWORDS          = BASE_URL + "/users/{userId}/notifications/preferences/categories/{categoryId}/keywords";
+        public static final String API_USERS_NOTIFICATIONS_PREFERENCES_CATEGORIES = BASE_URL + "/users/me/notifications/preferences/categories/{categoryId}";
+    public static final String API_USERS_NOTIFICATIONS_PREFERENCES_CATEGORIES_LIST = BASE_URL + "/users/me/notifications/preferences/categories";
+    public static final String API_USERS_NOTIFICATIONS_PREFERENCES_KEYWORDS = BASE_URL + "/users/me/notifications/preferences/categories/{categoryId}/keywords";
 
         // ─── News Endpoints ───────────────────────────────────────
         public static final String API_NEWS        = BASE_URL + "/news";
-        public static final String API_NEWS_FILTER = BASE_URL + "/news/{userId}/filter";
+    public static final String API_NEWS_FILTER = BASE_URL + "/news/me/filter";
 
         // ─── Reactions Endpoints ──────────────────────────────────
         public static final String API_REACTIONS_LIKE    = BASE_URL + "/reactions/like";
@@ -75,7 +78,7 @@ public class Constant {
         public static final String API_ADMIN_CONFIG_THRESHOLD     = BASE_URL + "/admin/config/threshold";
 
         // ─── Notifications ────────────────────────────────────────
-        public static final String API_USER_NOTIFICATIONS         = BASE_URL + "/user/{userId}/notifications";
+        public static final String API_USERS_NOTIFICATIONS = BASE_URL + "/users/me/notifications";
 
         // ─── Utilities ────────────────────────────────────────────
         public static Date toUtilDate(String dateStr) {

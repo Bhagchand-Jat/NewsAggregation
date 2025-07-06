@@ -4,7 +4,7 @@ import com.newsaggregator.client.dto.*;
 import com.newsaggregator.client.model.Keyword;
 import com.newsaggregator.client.service.AdminService;
 import com.newsaggregator.client.service.NewsService;
-import com.newsaggregator.client.session.UserSession;
+import com.newsaggregator.client.session.TokenHolder;
 import com.newsaggregator.client.util.AdminMainMenu;
 import com.newsaggregator.client.util.CategoryMenu;
 import com.newsaggregator.client.util.ConsoleUtils;
@@ -26,12 +26,11 @@ public class AdminController {
 
     private final AdminService adminService;
     private final NewsService newsService;
-    private final UserSession session;
 
-    public AdminController(AdminService adminService, NewsService newsService, UserSession session) {
+    public AdminController(AdminService adminService, NewsService newsService) {
         this.adminService = Objects.requireNonNull(adminService);
         this.newsService = Objects.requireNonNull(newsService);
-        this.session = Objects.requireNonNull(session);
+
     }
 
 
@@ -81,7 +80,10 @@ public class AdminController {
                     updateArticleReportThreshold();
                     yield true;
                 }
-                case LOGOUT -> false;
+                case LOGOUT -> {
+                    TokenHolder.clear();
+                    yield false;
+                }
             };
         }
         return false;
@@ -280,7 +282,7 @@ public class AdminController {
 
 
     private void printWelcome() {
-        System.out.printf("%nWelcome Admin, %s | Date: %s | Time: %s%n", session.getUserName(),
+        System.out.printf("%nWelcome Admin, %s | Date: %s | Time: %s%n", TokenHolder.getName(),
                 LocalDate.now().format(Constant.dateFormatter), LocalTime.now().format(Constant.timeFormatter));
     }
 

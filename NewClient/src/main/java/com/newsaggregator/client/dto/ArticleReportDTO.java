@@ -19,9 +19,9 @@ public class ArticleReportDTO {
 
     }
 
-    public ArticleReportDTO(Long articleId, Long userId, String reason) {
+    public ArticleReportDTO(Long articleId, String reason) {
         this.articleId = articleId;
-        this.userId = userId;
+        this.userId = 0L;
         this.reason = reason;
     }
 
