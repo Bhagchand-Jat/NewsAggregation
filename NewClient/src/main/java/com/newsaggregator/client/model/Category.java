@@ -1,23 +1,17 @@
-package com.news_aggregation_system.model;
+package com.newsaggregator.client.model;
 
-import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
-@Entity
-@Table(name = "categories")
 public class Category {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long categoryId;
 
-    @Column(nullable = false, unique = true)
     private String name;
+    private boolean enabled;
 
-    private boolean enabled = true;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private Set<Keyword> keywords = new HashSet<>();
 
     public Category() {
     }
@@ -38,20 +32,20 @@ public class Category {
         this.name = name;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public boolean isEnabled() {
         return enabled;
     }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Set<Keyword> getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(Set<Keyword> keywords) {
+        this.keywords = keywords;
     }
 }
 
