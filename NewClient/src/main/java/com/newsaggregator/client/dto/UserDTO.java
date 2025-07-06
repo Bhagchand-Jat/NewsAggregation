@@ -1,34 +1,30 @@
-package com.news_aggregation_system.model;
+package com.newsaggregator.client.dto;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.newsaggregator.client.model.Role;
 
-import java.util.HashSet;
-import java.util.Set;
+@JsonInclude
+public class UserDTO {
 
-@Entity
-@Table(name = "users")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private Long userId;
 
-    @Column(unique = true, nullable = false)
+
     private String email;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private String password;
 
-    private boolean isEnabled = true;
-
-    @ManyToOne
-    @JoinColumn(name = "role_id")
     private Role role;
 
-    public User() {
+    public UserDTO() {
+    }
+
+
+    public UserDTO(String email, String name, String password) {
+        this.email = email;
+        this.name = name;
+        this.password = password;
     }
 
 
@@ -72,13 +68,5 @@ public class User {
         this.role = role;
     }
 
-
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
-    }
 
 }

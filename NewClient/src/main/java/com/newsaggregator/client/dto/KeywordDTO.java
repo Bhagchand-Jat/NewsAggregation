@@ -1,18 +1,21 @@
-package com.news_aggregation_system.dto;
-
-import jakarta.validation.constraints.NotBlank;
+package com.newsaggregator.client.dto;
 
 public class KeywordDTO {
     private Long keywordId;
 
-    @NotBlank(message = "Keyword name is required")
     private String name;
 
     private Long userId;
 
-    private boolean enabled;
+    private boolean enabled = true;
+    private Long categoryId;
 
     public KeywordDTO() {
+    }
+
+    public KeywordDTO(String name, Long userId) {
+        this.name = name;
+        this.userId = userId;
     }
 
     public Long getKeywordId() {
@@ -45,5 +48,13 @@ public class KeywordDTO {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 }
