@@ -22,20 +22,11 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    private boolean isEnabled = true;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private NotificationConfig notificationConfig;
-    @OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL)
-    private Set<Category> categories = new HashSet<>();
-
-    @OneToMany(mappedBy = "keywordId", cascade = CascadeType.ALL)
-    private Set<Keyword> keywords = new HashSet<>();
-
-    @OneToMany(mappedBy = "notificationId", cascade = CascadeType.ALL)
-    private Set<Notification> notifications = new HashSet<>();
 
     public User() {
     }
@@ -81,37 +72,13 @@ public class User {
         this.role = role;
     }
 
-    public Set<Category> getCategories() {
-        return categories;
+
+    public boolean isEnabled() {
+        return isEnabled;
     }
 
-    public void setCategories(Set<Category> categories) {
-        this.categories = categories;
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
-
-    public Set<Notification> getNotifications() {
-        return notifications;
-    }
-
-    public void setNotifications(Set<Notification> notifications) {
-        this.notifications = notifications;
-    }
-
-    public NotificationConfig getNotificationConfig() {
-        return notificationConfig;
-    }
-
-    public void setNotificationConfig(NotificationConfig notificationConfig) {
-        this.notificationConfig = notificationConfig;
-    }
-
-    public Set<Keyword> getKeywords() {
-        return keywords;
-    }
-
-    public void setKeywords(Set<Keyword> keywords) {
-        this.keywords = keywords;
-    }
-
 
 }

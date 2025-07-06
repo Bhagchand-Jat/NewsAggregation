@@ -57,4 +57,3 @@ public class Keyword {
         this.category = category;
     }
 }
-
