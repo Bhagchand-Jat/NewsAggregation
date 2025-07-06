@@ -226,7 +226,7 @@ public class AdminController {
             pause();
             return;
         }
-        printIndexed(keywords, KeywordDTO::getName);
+        printIndexed(keywords, keywordDTO -> keywordDTO.getName() + " "+(keywordDTO.isEnabled()?ENABLED_LABEL:DISABLED_LABEL));
         pause();
     }
 
