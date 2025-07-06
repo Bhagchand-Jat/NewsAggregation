@@ -8,28 +8,24 @@ import com.newsaggregator.client.service.NewsService;
 import com.newsaggregator.client.util.Constant;
 import com.newsaggregator.client.util.UiText;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-import static com.newsaggregator.client.util.Constant.ARTICLE_ID;
-import static com.newsaggregator.client.util.Constant.USER_ID;
+import static com.newsaggregator.client.util.Constant.*;
 
 public class NewsServiceImpl extends BaseService implements NewsService {
 
     @Override
-    public List<ArticleDTO> fetchHeadlines(Date from, Date to, Long categoryId) {
-        String url = Constant.API_NEWS_FILTER;
+    public List<ArticleDTO> fetchHeadlines(Date from, Date to, Long categoryId,Long userId) {
         ArticleFilterRequestDTO filterRequestDTO = new ArticleFilterRequestDTO(categoryId, to, from);
-        return safePostList(url, filterRequestDTO, new TypeReference<>() {
+        return safePostList(Constant.API_NEWS_FILTER.replace(USER_ID,userId.toString()), filterRequestDTO, new TypeReference<>() {
         });
     }
 
     @Override
     public void saveArticle(Long userId, Long articleId) {
-        String url = Constant.API_USERS_SAVE_ARTICLE;
         SavedArticleDTO savedArticleDTO = new SavedArticleDTO(userId, articleId);
-        safePost(url, savedArticleDTO, new TypeReference<Void>() {
+        safePost(Constant.API_USERS_SAVE_ARTICLE, savedArticleDTO, new TypeReference<Void>() {
         });
     }
 
@@ -49,10 +45,10 @@ public class NewsServiceImpl extends BaseService implements NewsService {
     }
 
     @Override
-    public List<ArticleDTO> searchArticles(String query) {
+    public List<ArticleDTO> searchArticles(String query,Long userId) {
 
-        String url = Constant.API_NEWS_SEARCH + "?keyword=" + query;
-        return safeGetList(url, new TypeReference<>() {
+        ArticleFilterRequestDTO filterRequestDTO = new ArticleFilterRequestDTO(query);
+        return safePostList(API_NEWS_FILTER.replace(USER_ID,userId.toString()), filterRequestDTO, new TypeReference<>() {
         });
     }
 
@@ -63,19 +59,19 @@ public class NewsServiceImpl extends BaseService implements NewsService {
     }
 
     @Override
-    public List<ArticleDTO> todayNewsArticles() {
-        LocalDate date = LocalDate.now();
-        String url = Constant.API_NEWS_DATE + "?date=" + date.format(Constant.isoDateFormatter);
-        return safeGetList(url, new TypeReference<>() {
+    public List<ArticleDTO> todayNewsArticles(Long userId) {
+
+        Date today = new Date(System.currentTimeMillis());
+        ArticleFilterRequestDTO filterRequestDTO = new ArticleFilterRequestDTO(today);
+        return safePostList(Constant.API_NEWS_FILTER.replace(USER_ID,userId.toString()), filterRequestDTO, new TypeReference<>() {
         });
     }
 
     @Override
     public void reportArticle(Long userId, Long articleId, String reason) {
-        String url = Constant.API_USERS_REPORT_ARTICLE;
         ArticleReportDTO articleReportDTO = new ArticleReportDTO(articleId, userId, reason);
 
-        safePost(url, articleReportDTO, new TypeReference<Void>() {
+        safePost(Constant.API_USERS_REPORT_ARTICLE, articleReportDTO, new TypeReference<Void>() {
         });
     }
 
@@ -101,8 +97,28 @@ public class NewsServiceImpl extends BaseService implements NewsService {
 
     @Override
     public List<ArticleReportDTO> getUserReports(Long userId) {
-        String url = Constant.API_USERS_REPORTS.replace("{userId}", userId.toString());
+        String url = Constant.API_USERS_REPORTS.replace(USER_ID, userId.toString());
         return safeGetList(url, new TypeReference<>() {
         });
     }
+
+    @Override
+    public void markArticleAsRead(Long userId, Long articleId) {
+        String url = Constant.API_USERS_MARK_ARTICLE_AS_READ
+                .replace(USER_ID, userId.toString())
+                .replace(ARTICLE_ID, articleId.toString());
+        safePost(url, null, new TypeReference<>() {
+        });
+    }
+
+    @Override
+    public List<ArticleReadHistoryDTO> getArticlesReadHistory(Long userId) {
+        String url = Constant.API_USERS_ARTICLES_READ_HISTORY
+                .replace(USER_ID, userId.toString());
+
+        return safeGetList(url, new TypeReference<>() {
+        });
+    }
+
+
 }
