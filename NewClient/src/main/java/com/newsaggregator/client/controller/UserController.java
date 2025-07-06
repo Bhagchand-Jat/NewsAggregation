@@ -277,7 +277,7 @@ public class UserController {
     }
 
     private CategoryMenu[] categoryActions() {
-        EnumSet<CategoryMenu> categorySet = EnumSet.of(CategoryMenu.UPDATE_CATEGORY_STATUS, CategoryMenu.ADD_KEYWORDS, CategoryMenu.VIEW_KEYWORDS, CategoryMenu.BACK);
+        EnumSet<CategoryMenu> categorySet = EnumSet.of(CategoryMenu.UPDATE_CATEGORY_STATUS, CategoryMenu.ADD_KEYWORDS, CategoryMenu.VIEW_KEYWORDS,CategoryMenu.DELETE_KEYWORD, CategoryMenu.BACK);
         return categorySet.toArray(new CategoryMenu[0]);
     }
 
