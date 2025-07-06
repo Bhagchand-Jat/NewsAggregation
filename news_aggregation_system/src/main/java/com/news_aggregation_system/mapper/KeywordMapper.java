@@ -2,7 +2,6 @@ package com.news_aggregation_system.mapper;
 
 import com.news_aggregation_system.dto.KeywordDTO;
 import com.news_aggregation_system.model.Keyword;
-import com.news_aggregation_system.model.User;
 
 public class KeywordMapper {
 

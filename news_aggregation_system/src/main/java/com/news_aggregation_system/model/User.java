@@ -2,9 +2,6 @@ package com.news_aggregation_system.model;
 
 import jakarta.persistence.*;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Entity
 @Table(name = "users")
 public class User {
@@ -71,7 +68,6 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
-
 
     public boolean isEnabled() {
         return isEnabled;
