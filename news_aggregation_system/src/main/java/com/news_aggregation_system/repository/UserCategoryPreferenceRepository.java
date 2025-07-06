@@ -8,11 +8,10 @@ import java.util.Optional;
 
 public interface UserCategoryPreferenceRepository extends JpaRepository<UserCategoryPreference, Long> {
 
-    List<UserCategoryPreference> findByUserUserIdAndEnabledTrueAndCategoryEnabledTrue(Long userId);
+    List<UserCategoryPreference> findByUserUserIdAndEnabledTrue(Long userId);
 
     int deleteByUserUserIdAndCategoryCategoryId(Long userId, Long categoryId);
 
     Optional<UserCategoryPreference> findByUserUserIdAndCategoryCategoryId(Long userId, Long categoryId);
 
-    List<UserCategoryPreference> findByUserUserIdAndEnabledTrue(Long userId);
 }

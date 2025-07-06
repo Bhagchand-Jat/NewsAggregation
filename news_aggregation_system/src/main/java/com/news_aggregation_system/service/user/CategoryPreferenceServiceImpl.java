@@ -97,7 +97,7 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
         List<Category> categories = categoryRepository.findByEnabledTrue();
 
         Set<Long> enabledPreferenceCategoryIds = userCategoryPreferenceRepository
-                .findByUserUserIdAndEnabledTrueAndCategoryEnabledTrue(userId)
+                .findByUserUserIdAndEnabledTrue(userId)
                 .stream()
                 .map(preference -> preference.getCategory().getCategoryId())
                 .collect(Collectors.toSet());
