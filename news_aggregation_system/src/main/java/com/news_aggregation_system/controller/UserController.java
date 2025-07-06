@@ -2,6 +2,7 @@ package com.news_aggregation_system.controller;
 
 import com.news_aggregation_system.dto.*;
 import com.news_aggregation_system.response.ApiResponse;
+import com.news_aggregation_system.security.CustomUserDetails;
 import com.news_aggregation_system.service.admin.CategoryService;
 import com.news_aggregation_system.service.news.NewsAggregationService;
 import com.news_aggregation_system.service.user.ArticleReadHistoryService;
@@ -9,6 +10,8 @@ import com.news_aggregation_system.service.user.SavedArticleService;
 import com.news_aggregation_system.service.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +20,7 @@ import static com.news_aggregation_system.service.common.Constant.*;
 
 @RestController
 @RequestMapping("/api/users")
+@PreAuthorize("hasRole('USER')")
 public class UserController {
 
     private final UserService userService;
@@ -33,36 +37,24 @@ public class UserController {
         this.articleReadHistoryService = articleReadHistoryService;
     }
 
-    @PutMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UserDTO>> updateUser(@PathVariable Long userId, @Valid @RequestBody UserDTO userDTO) {
-        UserDTO updatedUser = userService.update(userId, userDTO);
+    @PutMapping("/me")
+    public ResponseEntity<ApiResponse<UserDTO>> updateUser(@AuthenticationPrincipal CustomUserDetails user, @Valid @RequestBody UserDTO userDTO) {
+        UserDTO updatedUser = userService.update(user.getUserId(), userDTO);
         ApiResponse<UserDTO> response = new ApiResponse<>(USER_UPDATED_SUCCESS, true, updatedUser);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UserDTO>> getUserById(@PathVariable Long userId) {
-        UserDTO user = userService.getById(userId);
-        ApiResponse<UserDTO> response = new ApiResponse<>(USER_FETCHED_SUCCESS, true, user);
-        return ResponseEntity.ok(response);
-    }
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<UserDTO>>> getAllUsers() {
-
-        return ResponseEntity.ok(ApiResponse.ok(userService.getAll()));
-    }
-
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long userId) {
-        userService.delete(userId);
+    @DeleteMapping("/me")
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@AuthenticationPrincipal CustomUserDetails user) {
+        userService.delete(user.getUserId());
         ApiResponse<Void> response = new ApiResponse<>(USER_DELETE_SUCCESS, true, null);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{userId}/saved-articles")
-    public ResponseEntity<ApiResponse<List<ArticleDTO>>> getSavedArticles(@PathVariable Long userId) {
-        List<ArticleDTO> saved = savedArticleService.getSavedArticlesByUser(userId);
+    @GetMapping("/me/saved-articles")
+    public ResponseEntity<ApiResponse<List<ArticleDTO>>> getSavedArticles(@AuthenticationPrincipal CustomUserDetails user) {
+        List<ArticleDTO> saved = savedArticleService.getSavedArticlesByUser(user.getUserId());
         return ResponseEntity.ok(ApiResponse.ok(saved));
     }
 
@@ -72,11 +64,11 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.ok(ARTICLE_SAVED_SUCCESS));
     }
 
-    @DeleteMapping("/{userId}/saved-article/{articleId}")
+    @DeleteMapping("/me/saved-article/{articleId}")
     public ResponseEntity<ApiResponse<Void>> deleteSavedArticle(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long articleId) {
-        savedArticleService.deleteSavedArticle(userId, articleId);
+        savedArticleService.deleteSavedArticle(user.getUserId(), articleId);
         return ResponseEntity.ok(ApiResponse.ok(SAVED_ARTICLE_DELETE_SUCCESS));
     }
 
@@ -86,26 +78,27 @@ public class UserController {
     }
 
     @PostMapping("/report-article")
-    public ResponseEntity<ApiResponse<Void>> reportArticle(@RequestBody @Valid ArticleReportDTO articleReportDTO) {
+    public ResponseEntity<ApiResponse<Void>> reportArticle(@AuthenticationPrincipal CustomUserDetails user,@RequestBody @Valid ArticleReportDTO articleReportDTO) {
+        articleReportDTO.setUserId(user.getUserId());
         newsAggregationService.reportArticle(articleReportDTO);
         return ResponseEntity.ok(ApiResponse.ok(ARTICLE_REPORTED_SUCCESS));
     }
 
-    @GetMapping("/{userId}/articles-reports")
-    public ResponseEntity<ApiResponse<List<ArticleReportDTO>>> getArticlesReports(@PathVariable Long userId) {
+    @GetMapping("/me/articles-reports")
+    public ResponseEntity<ApiResponse<List<ArticleReportDTO>>> getArticlesReports(@AuthenticationPrincipal CustomUserDetails user) {
 
-        return ResponseEntity.ok(ApiResponse.ok(newsAggregationService.getAllArticlesReportsByUserId(userId)));
+        return ResponseEntity.ok(ApiResponse.ok(newsAggregationService.getAllArticlesReportsByUserId(user.getUserId())));
     }
 
-    @PostMapping("/{userId}/article/{articleId}/markAsRead")
-    public ResponseEntity<ApiResponse<Void>> createReadArticleHistory(@PathVariable Long userId, @PathVariable Long articleId) {
-        articleReadHistoryService.markAsRead(userId, articleId);
+    @PostMapping("/me/article/{articleId}/markAsRead")
+    public ResponseEntity<ApiResponse<Void>> createReadArticleHistory(@AuthenticationPrincipal CustomUserDetails user, @PathVariable Long articleId) {
+        articleReadHistoryService.markAsRead(user.getUserId(), articleId);
         return ResponseEntity.ok(ApiResponse.ok(ARTICLE_READ_HISTORY_UPDATED_SUCCESS));
     }
 
-    @GetMapping("/{userId}/articles-read-history")
-    public ResponseEntity<ApiResponse<List<ArticleReadHistoryDTO>>> getArticlesReadHistory(@PathVariable Long userId) {
-        return ResponseEntity.ok(ApiResponse.ok(articleReadHistoryService.getArticleReadHistory(userId)));
+    @GetMapping("/me/articles-read-history")
+    public ResponseEntity<ApiResponse<List<ArticleReadHistoryDTO>>> getArticlesReadHistory(@AuthenticationPrincipal CustomUserDetails user) {
+        return ResponseEntity.ok(ApiResponse.ok(articleReadHistoryService.getArticleReadHistory(user.getUserId())));
     }
 
 }

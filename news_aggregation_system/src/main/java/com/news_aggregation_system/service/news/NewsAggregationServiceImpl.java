@@ -20,7 +20,6 @@ import com.news_aggregation_system.service.user.ArticleReactionService;
 import com.news_aggregation_system.service.user.ArticleReadHistoryService;
 import com.news_aggregation_system.service.user.CategoryPreferenceService;
 import com.news_aggregation_system.service.user.SavedArticleService;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,22 +70,6 @@ public class NewsAggregationServiceImpl implements NewsAggregationService {
         return articleRepository.findAll().stream().map(ArticleMapper::toDto).toList();
     }
 
-    @Override
-    public List<ArticleDTO> getArticlesByCategory(String category) {
-
-        return articleRepository.findByCategoryName(category).stream().map(ArticleMapper::toDto).toList();
-    }
-
-    @Override
-    public List<ArticleDTO> getArticlesByDate(Date date) {
-        return articleRepository.findByPublishedAtDate(date).stream().map(ArticleMapper::toDto).toList();
-    }
-
-    @Override
-    public List<ArticleDTO> getArticlesByDateRange(Date from, Date to) {
-        Sort sort = Sort.by(Sort.Direction.ASC, PUBLISHED_AT);
-        return articleRepository.findAllByPublishedAtBetween(from, to, sort).stream().map(ArticleMapper::toDto).toList();
-    }
 
     @Transactional
     @Override
@@ -122,12 +105,6 @@ public class NewsAggregationServiceImpl implements NewsAggregationService {
         return result;
     }
 
-    @Override
-    public List<ArticleDTO> searchArticlesByKeyword(String keyword) {
-        List<Article> articles = articleRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword,
-                keyword);
-        return articles.stream().map(ArticleMapper::toDto).toList();
-    }
 
     @Transactional
     @Override
@@ -141,14 +118,6 @@ public class NewsAggregationServiceImpl implements NewsAggregationService {
         articleDTOs.removeAll(toBeRemovedArticles);
         return articleRepository.saveAll(articleDTOs.stream().map(ArticleMapper::toEntity).toList()).stream()
                 .map(ArticleMapper::toDto).toList();
-    }
-
-    @Override
-    public List<ArticleDTO> getArticlesSortedByLikesAndDislikes() {
-        List<Article> sortedArticles = articleRepository.findAllOrderByLikesAndDislikes();
-        return sortedArticles.stream()
-                .map(ArticleMapper::toDto)
-                .toList();
     }
 
     @Transactional

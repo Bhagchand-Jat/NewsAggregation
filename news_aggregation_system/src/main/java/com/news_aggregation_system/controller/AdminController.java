@@ -2,13 +2,17 @@ package com.news_aggregation_system.controller;
 
 import com.news_aggregation_system.dto.*;
 import com.news_aggregation_system.response.ApiResponse;
+import com.news_aggregation_system.security.CustomUserDetails;
 import com.news_aggregation_system.service.admin.CategoryService;
 import com.news_aggregation_system.service.admin.KeywordService;
 import com.news_aggregation_system.service.admin.NewsSourceService;
 import com.news_aggregation_system.service.news.NewsAggregationService;
+import com.news_aggregation_system.service.user.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,17 +21,20 @@ import static com.news_aggregation_system.service.common.Constant.*;
 
 @RestController
 @RequestMapping("/api/admin")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
     private final NewsSourceService newsSourceService;
     private final CategoryService categoryService;
     private final KeywordService keywordService;
     private final NewsAggregationService newsAggregationService;
+    private final UserService userService;
 
-    public AdminController(NewsSourceService newsSourceService, CategoryService categoryService, KeywordService keywordService, NewsAggregationService newsAggregationService) {
+    public AdminController(NewsSourceService newsSourceService, CategoryService categoryService, KeywordService keywordService, NewsAggregationService newsAggregationService, UserService userService) {
         this.newsSourceService = newsSourceService;
         this.categoryService = categoryService;
         this.keywordService = keywordService;
         this.newsAggregationService = newsAggregationService;
+        this.userService = userService;
     }
 
     @PostMapping("/categories")
@@ -136,5 +143,10 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.ok(newsAggregationService.getAllArticleReportsByArticleId(articleId)));
     }
 
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<UserDTO>>> getAllUsers() {
+
+        return ResponseEntity.ok(ApiResponse.ok(userService.getAll()));
+    }
 
 }

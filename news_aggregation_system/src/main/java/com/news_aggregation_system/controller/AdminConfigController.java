@@ -3,12 +3,14 @@ package com.news_aggregation_system.controller;
 import com.news_aggregation_system.response.ApiResponse;
 import com.news_aggregation_system.service.admin.SystemConfigService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static com.news_aggregation_system.service.common.Constant.*;
 
 @RestController
 @RequestMapping("/api/admin/config")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminConfigController {
 
     private final SystemConfigService configService;

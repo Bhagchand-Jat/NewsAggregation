@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
-    private final LocalDateTime timestamp = LocalDateTime.now();
+    private final Long timestamp = System.currentTimeMillis();
     private final String message;
     private final boolean success;
     private final T data;
@@ -42,7 +42,7 @@ public class ApiResponse<T> {
         return new ApiResponse<>(message, false, data);
     }
 
-    public LocalDateTime getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 

@@ -1,6 +1,10 @@
 package com.news_aggregation_system.service.common;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class Constant {
+
+    public static final ObjectMapper MAPPER = new ObjectMapper();
 
     public static final String USER_ROLE = "USER";
     public static final String ENABLED = "enabled";
@@ -23,6 +27,9 @@ public class Constant {
     public static final String LIKE = "LIKE";
 
     public static final String SUCCESSFULLY = " Successfully";
+    public static final String ACCESS_DENIED = "Access Denied";
+    public static final String UN_AUTHORIZED_ACCESS = "Unauthorized Access";
+    public static final String TYPE_JSON =  "application/json";
     public static final String HIDDEN = " hidden";
     public static final String API_KEY_UPDATE_SUCCESS = "API key updated successfully";
     public static final String NEWS_SOURCE_UPDATED_SUCCESS = "News source updated Successfully";
@@ -76,4 +83,8 @@ public class Constant {
     public static final String INVALID_EMAIL_PASSWORD = "Invalid email or password";
 
 
+    public static final String USER_NOT_FOUND_WITH_EMAIL = "User not Found with email: ";
+    public static final String USER_DISABLE_MESSAGE = "Your account is disabled. Please contact support.";
+    public static final String JWT_SECRET_NOT_SET = "JWT_SECRET is not set";
+    public static final String INVALID_OR_EXPIRED_TOKEN = "Invalid or expired token";
 }
