@@ -19,6 +19,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    private boolean isEnabled = true;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
@@ -68,4 +70,11 @@ public class User {
         this.role = role;
     }
 
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
 }
