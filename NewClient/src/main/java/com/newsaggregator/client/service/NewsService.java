@@ -9,31 +9,31 @@ import java.util.Date;
 import java.util.List;
 
 public interface NewsService {
-    List<ArticleDTO> fetchHeadlines(Date from, Date to, Long categoryId,Long userId);
+    List<ArticleDTO> fetchHeadlines(Date from, Date to, Long categoryId);
 
-    void saveArticle(Long userId, Long articleId);
+    void saveArticle(Long articleId);
 
-    boolean deleteSavedArticle(Long userId, Long articleId);
+    boolean deleteSavedArticle(Long articleId);
 
-    List<ArticleDTO> getSavedArticles(Long userId);
+    List<ArticleDTO> getSavedArticles();
 
-    List<ArticleDTO> searchArticles(String query,Long userId);
+    List<ArticleDTO> searchArticles(String query);
 
     List<ArticleDTO> allNewsArticles();
 
-    List<ArticleDTO> todayNewsArticles(Long userId);
+    List<ArticleDTO> todayNewsArticles();
 
-    void reportArticle(Long userId, Long articleId, String reason);
+    void reportArticle(Long articleId, String reason);
 
-    void likeArticle(Long articleId, Long userId);
+    void likeArticle(Long articleId);
 
-    void disLikeArticle(Long articleId, Long userId);
+    void disLikeArticle(Long articleId);
 
     List<CategoryDTO> getCategories();
 
-    List<ArticleReportDTO> getUserReports(Long userId);
+    List<ArticleReportDTO> getUserReports();
 
-    void markArticleAsRead(Long userId, Long articleId);
+    void markArticleAsRead(Long articleId);
 
-    List<ArticleReadHistoryDTO> getArticlesReadHistory(Long userId);
+    List<ArticleReadHistoryDTO> getArticlesReadHistory();
 }

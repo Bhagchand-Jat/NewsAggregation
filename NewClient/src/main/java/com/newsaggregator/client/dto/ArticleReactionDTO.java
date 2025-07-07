@@ -15,9 +15,9 @@ public class ArticleReactionDTO {
     public ArticleReactionDTO() {
     }
 
-    public ArticleReactionDTO(Long articleId, Long userId, ReactionType reactionType) {
+    public ArticleReactionDTO(Long articleId, ReactionType reactionType) {
         this.articleId = articleId;
-        this.userId = userId;
+        this.userId = 0L;
         this.reactionType = reactionType.name();
     }
 

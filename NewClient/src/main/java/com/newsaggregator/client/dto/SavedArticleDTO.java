@@ -10,8 +10,8 @@ public class SavedArticleDTO {
     public SavedArticleDTO() {
     }
 
-    public SavedArticleDTO(Long userId, Long articleId) {
-        this.userId = userId;
+    public SavedArticleDTO(Long articleId) {
+        this.userId = 0L;
         this.articleId = articleId;
     }
 

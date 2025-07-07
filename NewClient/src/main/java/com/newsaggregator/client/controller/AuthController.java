@@ -1,10 +1,7 @@
 package com.newsaggregator.client.controller;
 
 import com.newsaggregator.client.service.AuthService;
-import com.newsaggregator.client.session.UserSession;
 import com.newsaggregator.client.util.ConsoleUtils;
-
-import java.util.Optional;
 
 import static com.newsaggregator.client.util.UiText.*;
 
@@ -15,7 +12,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    public Optional<UserSession> start() {
+    public void start() {
         while (true) {
             System.out.println("\n" + WELCOME_HEADER);
             System.out.println("1. " + LOGIN_OPTION);
@@ -25,32 +22,34 @@ public class AuthController {
             String input = ConsoleUtils.readLine(CHOICE);
             switch (input) {
                 case "1" -> {
-                    return login();
+                    login();
+                    return;
                 }
                 case "2" -> {
-                    return signup();
+                    signup();
+                    return;
                 }
                 case "3" -> {
                     System.exit(0);
-                    return Optional.empty();
+                    return;
                 }
                 default -> System.out.println(INVALID);
             }
         }
     }
 
-    private Optional<UserSession> login() {
+    private void login() {
         String email = ConsoleUtils.readLine(EMAIL_PROMPT);
         String password = ConsoleUtils.readPassword(PASSWORD_PROMPT);
 
-        return authService.login(email, password);
+        authService.login(email, password);
     }
 
-    private Optional<UserSession> signup() {
+    private void signup() {
         String name = ConsoleUtils.readLine(NAME_PROMPT);
         String email = ConsoleUtils.readLine(EMAIL_PROMPT);
         String password = ConsoleUtils.readLine(PASSWORD_PROMPT);
 
-        return authService.signup(name, email, password);
+        authService.signup(name, email, password);
     }
 }

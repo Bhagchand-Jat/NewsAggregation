@@ -6,16 +6,16 @@ import com.newsaggregator.client.dto.NotificationDTO;
 import java.util.List;
 
 public interface NotificationService {
-    List<NotificationDTO> viewNotifications(Long userId);
+    List<NotificationDTO> viewNotifications();
 
 
-    void addKeywordsToCategory(Long userId, Long categoryId, List<String> keyword);
+    void addKeywordsToCategory(Long categoryId, List<String> keyword);
 
-    void deleteUserKeyword(Long userId, Long categoryId, String keyword);
+    void deleteUserKeyword(Long categoryId, String keyword);
 
-    List<CategoryStatusDTO> getCategoriesStatus(Long userId);
+    List<CategoryStatusDTO> getCategoriesStatus();
 
-    void updateCategoryStatus(Long userId, Long categoryId, boolean isEnabled);
+    void updateCategoryStatus(Long categoryId, boolean isEnabled);
 
-    List<String> viewKeywordsForCategory(Long userId, Long categoryId);
+    List<String> viewKeywordsForCategory(Long categoryId);
 }

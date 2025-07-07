@@ -3,7 +3,7 @@ package com.newsaggregator.client.controller;
 import com.newsaggregator.client.dto.*;
 import com.newsaggregator.client.service.NewsService;
 import com.newsaggregator.client.service.NotificationService;
-import com.newsaggregator.client.session.UserSession;
+import com.newsaggregator.client.session.TokenHolder;
 import com.newsaggregator.client.util.*;
 
 import java.time.LocalDate;
@@ -18,14 +18,13 @@ public class UserController {
 
     private final NewsService newsService;
     private final NotificationService notificationService;
-    private final UserSession session;
+
 
     public UserController(NewsService newsService,
-                          NotificationService notificationService,
-                          UserSession session) {
+                          NotificationService notificationService
+    ) {
         this.newsService = Objects.requireNonNull(newsService);
         this.notificationService = Objects.requireNonNull(notificationService);
-        this.session = Objects.requireNonNull(session);
     }
 
     public boolean start() {
@@ -57,7 +56,10 @@ public class UserController {
                     showArticleReadHistory();
                     yield true;
                 }
-                case LOGOUT -> false;
+                case LOGOUT -> {
+                    TokenHolder.clear();
+                    yield false;
+                }
             };
         }
         return false;
@@ -66,7 +68,7 @@ public class UserController {
 
     private void printWelcome() {
         System.out.printf("%n" + WELCOME_USER_HEADER + ", %s | Date: %s | Time: %s%n",
-                session.getUserName(),
+                TokenHolder.getName(),
                 LocalDate.now().format(Constant.dateFormatter),
                 LocalTime.now().format(Constant.timeFormatter));
     }
@@ -74,7 +76,7 @@ public class UserController {
 
     private void headlinesMenu() {
         switch (promptChoice(HeadlineMenu.values(), CHOOSE_OPTION_BELOW)) {
-            case TODAY -> showHeadlines(newsService.todayNewsArticles(session.getUserId()));
+            case TODAY -> showHeadlines(newsService.todayNewsArticles());
             case DATE_RANGE -> dateRangeHeadlinesMenu();
             case BACK -> {
             }
@@ -110,7 +112,7 @@ public class UserController {
             if (choice == 0 || invalidIndex(choice, categories.size())) return;
 
             CategoryDTO categoryDTO = categories.get(choice - 1);
-            showHeadlines(newsService.fetchHeadlines(from, to, categoryDTO.getCategoryId(), session.getUserId()));
+            showHeadlines(newsService.fetchHeadlines(from, to, categoryDTO.getCategoryId()));
 
         } catch (Exception e) {
             System.out.println(INVALID_DATE_FORMAT);
@@ -119,13 +121,13 @@ public class UserController {
 
 
     private void savedArticlesMenu() {
-        displayArticles(newsService.getSavedArticles(session.getUserId()), this::savedArticleActions);
+        displayArticles(newsService.getSavedArticles(), this::savedArticleActions);
     }
 
     private void searchArticlesMenu() {
         String query = ConsoleUtils.readLine(SEARCH_QUERY_PROMPT);
         System.out.printf("%n%s '%s'%n", SEARCH_ARTICLES, query);
-        displayArticles(newsService.searchArticles(query, session.getUserId()), this::searchArticleActions);
+        displayArticles(newsService.searchArticles(query), this::searchArticleActions);
     }
 
 
@@ -154,12 +156,12 @@ public class UserController {
 
         while (true) {
             switch (promptChoice(actions, header)) {
-                case SAVE -> newsService.saveArticle(session.getUserId(), articleDTO.getArticleId());
+                case SAVE -> newsService.saveArticle(articleDTO.getArticleId());
                 case REPORT -> reportArticle(articleDTO);
-                case LIKE -> newsService.likeArticle(articleDTO.getArticleId(), session.getUserId());
-                case DISLIKE -> newsService.disLikeArticle(articleDTO.getArticleId(), session.getUserId());
+                case LIKE -> newsService.likeArticle(articleDTO.getArticleId());
+                case DISLIKE -> newsService.disLikeArticle(articleDTO.getArticleId());
                 case DELETE -> {
-                    if (newsService.deleteSavedArticle(session.getUserId(), articleDTO.getArticleId())) return;
+                    if (newsService.deleteSavedArticle(articleDTO.getArticleId())) return;
                 }
                 case BACK -> {
                     return;
@@ -182,7 +184,7 @@ public class UserController {
     }
 
     private void configureNotificationMenu() {
-        List<CategoryStatusDTO> categoriesStatus = notificationService.getCategoriesStatus(session.getUserId());
+        List<CategoryStatusDTO> categoriesStatus = notificationService.getCategoriesStatus();
         if (categoriesStatus == null || categoriesStatus.isEmpty()) {
             System.out.println(NO_CATEGORIES);
             pause();
@@ -205,7 +207,7 @@ public class UserController {
     private void categoryMenu(CategoryStatusDTO categoryStatus) {
         while (true) {
             switch (promptChoice(categoryActions(), CATEGORY_UPDATE_PROMPT.replace("%s", categoryStatus.getName()))) {
-                case UPDATE_CATEGORY_STATUS -> notificationService.updateCategoryStatus(session.getUserId(),
+                case UPDATE_CATEGORY_STATUS -> notificationService.updateCategoryStatus(
                         categoryStatus.getCategoryId(), !categoryStatus.isEnabled());
                 case ADD_KEYWORDS -> addKeywordsToCategory(categoryStatus.getCategoryId());
                 case VIEW_KEYWORDS -> viewKeywordsForCategory(categoryStatus.getCategoryId());
@@ -220,7 +222,7 @@ public class UserController {
     }
 
     private void viewKeywordsForCategory(Long categoryId) {
-        List<String> keywords = notificationService.viewKeywordsForCategory(session.getUserId(), categoryId);
+        List<String> keywords = notificationService.viewKeywordsForCategory(categoryId);
         if (keywords == null || keywords.isEmpty()) {
             System.out.println("\n" + NO_KEYWORDS);
             pause();
@@ -232,11 +234,11 @@ public class UserController {
 
     private void deleteKeywordFromCategory(Long categoryId) {
         String keyword = ConsoleUtils.readLine(UiText.ENTER_KEYWORD_TO_DELETE);
-        notificationService.deleteUserKeyword(session.getUserId(), categoryId, keyword);
+        notificationService.deleteUserKeyword(categoryId, keyword);
     }
 
     private void showNotifications() {
-        List<NotificationDTO> notifications = notificationService.viewNotifications(session.getUserId());
+        List<NotificationDTO> notifications = notificationService.viewNotifications();
         if (notifications == null || notifications.isEmpty()) {
             System.out.println(NO_NOTIFICATIONS);
             pause();
@@ -247,7 +249,7 @@ public class UserController {
     }
 
     private void showReports() {
-        List<ArticleReportDTO> reports = newsService.getUserReports(session.getUserId());
+        List<ArticleReportDTO> reports = newsService.getUserReports();
         if (reports == null || reports.isEmpty()) {
             System.out.println(NO_REPORTS);
             pause();
@@ -283,12 +285,12 @@ public class UserController {
 
     private void addKeywordsToCategory(Long categoryId) {
         String keywords = ConsoleUtils.readLine(ENTER_KEYWORDS);
-        notificationService.addKeywordsToCategory(session.getUserId(),
+        notificationService.addKeywordsToCategory(
                 categoryId, Arrays.stream(keywords.split(",")).map(String::trim).toList());
     }
 
     private void showFullArticle(ArticleDTO articleDTO) {
-        newsService.markArticleAsRead(session.getUserId(), articleDTO.getArticleId());
+        newsService.markArticleAsRead(articleDTO.getArticleId());
         System.out.printf("%nID: %d%nTitle: %s%nDescription: %s%n",
                 articleDTO.getArticleId(), articleDTO.getTitle(), articleDTO.getDescription());
         System.out.println("Categories:");
@@ -301,11 +303,11 @@ public class UserController {
     private void reportArticle(ArticleDTO articleDTO) {
         String reason = ConsoleUtils.readLine(REPORT_REASON_PROMPT);
 
-        newsService.reportArticle(session.getUserId(), articleDTO.getArticleId(), reason);
+        newsService.reportArticle(articleDTO.getArticleId(), reason);
     }
 
     private void showArticleReadHistory() {
-        List<ArticleReadHistoryDTO> articlesReadHistory = newsService.getArticlesReadHistory(session.getUserId());
+        List<ArticleReadHistoryDTO> articlesReadHistory = newsService.getArticlesReadHistory();
         if (articlesReadHistory == null || articlesReadHistory.isEmpty()) {
             System.out.println(NO_ARTICLE_HISTORY);
         } else {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.newsaggregator.client.config.JwtInterceptor;
 import com.newsaggregator.client.response.ApiResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.springframework.http.*;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class HttpUtil {
     private static final RestTemplate restTemplate = restTemplate();
-    private static final ObjectMapper mapper = new ObjectMapper()
+    public static final ObjectMapper MAPPER = new ObjectMapper()
             .registerModule(new JavaTimeModule());
 
     private HttpUtil() {
@@ -26,7 +27,11 @@ public class HttpUtil {
                 new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
         factory.setConnectTimeout(5_000);
         factory.setReadTimeout(10_000);
-        return new RestTemplate(factory);
+
+        RestTemplate template = new RestTemplate(factory);
+
+        template.getInterceptors().add(new JwtInterceptor());
+        return template;
     }
 
     private static HttpHeaders createHeaders() {
@@ -39,7 +44,7 @@ public class HttpUtil {
 
     private static <T> ApiResponse<T> parseResponse(ResponseEntity<String> response, TypeReference<T> type) {
         try {
-            JsonNode root = mapper.readTree(response.getBody());
+            JsonNode root = MAPPER.readTree(response.getBody());
 
             String message = root.path("message").asText();
             boolean success = root.path("success").asBoolean();
@@ -47,7 +52,7 @@ public class HttpUtil {
 
             T data = dataNode.isMissingNode() || dataNode.isNull()
                     ? null
-                    : mapper.convertValue(dataNode, type);
+                    : MAPPER.convertValue(dataNode, type);
 
             return new ApiResponse<>(message, success, data);
         } catch (Exception e) {
@@ -101,7 +106,7 @@ public class HttpUtil {
 
     public static <T> ApiResponse<T> extractErrorResponse(HttpStatusCodeException exception) {
         try {
-            JsonNode root = mapper.readTree(exception.getResponseBodyAsString());
+            JsonNode root = MAPPER.readTree(exception.getResponseBodyAsString());
 
             String message = root.path("message").asText();
 //            boolean success = root.path("success").asBoolean();
@@ -109,7 +114,7 @@ public class HttpUtil {
 
             T data = dataNode.isMissingNode() || dataNode.isNull()
                     ? null
-                    : mapper.convertValue(dataNode, new TypeReference<>() {
+                    : MAPPER.convertValue(dataNode, new TypeReference<>() {
             });
             return ApiResponse.error(message, data);
         } catch (Exception parseEx) {
