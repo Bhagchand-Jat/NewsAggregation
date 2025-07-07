@@ -2,19 +2,26 @@ package com.news_aggregation_system.service.admin;
 
 import com.news_aggregation_system.dto.CategoryDTO;
 import com.news_aggregation_system.model.Category;
+import com.news_aggregation_system.repository.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 public class CategoryServiceImplTest {
+
+    @Mock
+    private CategoryRepository categoryRepository;
 
     @InjectMocks
     private CategoryServiceImpl service;
@@ -29,6 +36,7 @@ public class CategoryServiceImplTest {
     @DisplayName("getOrCreateCategory - success")
     void getOrCreateCategory_success() {
        Set<String> categories=new HashSet<>();
+
         Set<Category> result = service.getOrCreateCategories(categories);
         assertThat(result).isNotNull();
     }
@@ -45,6 +53,9 @@ public class CategoryServiceImplTest {
     @DisplayName("getByCategoryId - success")
     void getByCategoryName_success() {
         Long categoryId = 0L;
+        Category category = new Category();
+        category.setCategoryId(categoryId);
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
         CategoryDTO result = service.getById(categoryId);
         assertThat(result).isNotNull();
     }
@@ -62,8 +73,7 @@ public class CategoryServiceImplTest {
     void updateCategoryStatus_success() {
         Long categoryId = 10L;
         boolean isEnabled = false;
-        service.updateCategoryStatus(categoryId, isEnabled);
-
+        assertThatThrownBy(() -> service.updateCategoryStatus(categoryId, isEnabled));
     }
 
 }

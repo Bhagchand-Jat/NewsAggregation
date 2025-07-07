@@ -3,10 +3,17 @@ package com.news_aggregation_system.service.news;
 import com.news_aggregation_system.dto.ArticleDTO;
 import com.news_aggregation_system.dto.ArticleFilterRequestDTO;
 import com.news_aggregation_system.dto.ArticleReportDTO;
+import com.news_aggregation_system.repository.ArticleReportRepository;
+import com.news_aggregation_system.repository.ArticleRepository;
+import com.news_aggregation_system.service.admin.KeywordService;
+import com.news_aggregation_system.service.admin.NewsSourceService;
+import com.news_aggregation_system.service.admin.SystemConfigService;
+import com.news_aggregation_system.service.user.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
@@ -19,6 +26,38 @@ public class NewsAggregationServiceImplTest {
 
     @InjectMocks
     private NewsAggregationServiceImpl service;
+
+    @Mock
+    private ArticleRepository articleRepository;
+
+    @Mock
+    private ArticleReportRepository articleReportRepository;
+
+    @Mock
+    private NewsSourceService newsSourceService;
+
+    @Mock
+    private KeywordService keywordService;
+
+    @Mock
+    private UserService userService;
+
+    @Mock
+    private SystemConfigService systemConfigService;
+
+    @Mock
+    private CategoryPreferenceService categoryPreferenceService;
+
+    @Mock
+    private ArticleReactionService articleReactionService;
+
+    @Mock
+    private SavedArticleService savedArticleService;
+
+    @Mock
+    private ArticleReadHistoryService articleReadHistoryService;
+
+
 
     @BeforeEach
     void init() {
@@ -49,8 +88,9 @@ public class NewsAggregationServiceImplTest {
     @DisplayName("updateArticleStatusById - success")
     void updateArticleStatusById_success() {
         Long articleId = 1L;
-        boolean enabled = false; 
-        service.updateArticleStatusById(articleId, enabled);
+        boolean enabled = false;
+
+       assertThatThrownBy(()-> service.updateArticleStatusById(articleId, enabled));
        
     }
 

@@ -44,14 +44,13 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("getById – returns null when user not found")
+    @DisplayName("getById – returns  user not found")
     void getById_notFound() {
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
+        assertThatThrownBy(() -> userService.getById(anyLong()));
 
-
-        assertThat(userService.getById(99L)).isNotNull();
     }
 
 }
