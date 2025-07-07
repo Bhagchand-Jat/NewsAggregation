@@ -74,7 +74,6 @@ public class NewsAggregationServiceImplTest {
     @Test
     @DisplayName("getArticleReportByArticleIdAndUserId - success")
     void getArticleReportByArticleIdAndUserId_success() {
-        Long articleId = 1L;
         Long userId = 2L;
         List<ArticleReportDTO> result = service.getAllArticlesReportsByUserId( userId);
         assertThat(result).isNotNull();
