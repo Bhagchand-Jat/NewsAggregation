@@ -33,7 +33,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<JwtAuthResponse>> signup(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<ApiResponse<JwtAuthResponse>> signup(@Valid @RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(ApiResponse.ok(authService.register(userDTO)));
     }
 
