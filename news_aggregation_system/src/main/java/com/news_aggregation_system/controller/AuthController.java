@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.news_aggregation_system.service.common.Constant.LOGIN_SUCCESS;
-import static com.news_aggregation_system.service.common.Constant.SIGNUP_SUCCESS;
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -33,7 +30,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<JwtAuthResponse>> signup(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<ApiResponse<JwtAuthResponse>> signup(@Valid @RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(ApiResponse.ok(authService.register(userDTO)));
     }
 
