@@ -18,18 +18,18 @@ public class JwtUtil {
 
     private static final String SECRET = Optional.ofNullable(System.getenv("JWT_SECRET"))
             .orElseThrow(() -> new IllegalStateException(Constant.JWT_SECRET_NOT_SET));
-    private static final long ACCESS_EXP = 15 * 60 * 1000;
-    private static final long REFRESH_EXP = 7 * 24 * 60 * 60 * 1000;
+    private static final long ACCESS_EXPIRY = 24 * 60 * 60 * 1000;
+    private static final long REFRESH_EXPIRY = 7 * 24 * 60 * 60 * 1000;
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
     public JwtUtil() {
     }
 
     public String generateAccessToken(UserDetails userDetails) {
-        return buildToken(Map.of("userId", ((CustomUserDetails) userDetails).getUserId()), userDetails.getUsername(), ACCESS_EXP);
+        return buildToken(Map.of("userId", ((CustomUserDetails) userDetails).getUserId()), userDetails.getUsername(), ACCESS_EXPIRY);
     }
     public String generateRefreshToken(UserDetails userDetails) {
-        return buildToken(Map.of(), userDetails.getUsername(), REFRESH_EXP);
+        return buildToken(Map.of(), userDetails.getUsername(), REFRESH_EXPIRY);
     }
 
     private String buildToken(Map<String, Object> claims, String subject, long expiry) {
@@ -44,11 +44,6 @@ public class JwtUtil {
 
     public String extractUsername(String token) {
         return parse(token).getBody().getSubject();
-    }
-
-    public Long extractUserId(String token) {
-        Object v = parse(token).getBody().get("userId");
-        return v == null ? null : Long.valueOf(v.toString());
     }
 
     public boolean isTokenValid(String token, UserDetails ud) {

@@ -277,9 +277,6 @@ public class AdminControllerTest {
     @DisplayName("PATCH /api/admin/categories/1/keywords/AI returns 200 OK")
     void updateKeywordStatus_returnsOk() throws Exception {
 
-        lenient().when(categoryService.toString()).thenReturn("mock");
-
-        lenient().when(keywordService.toString()).thenReturn("mock");
 
         mvc.perform(patch("/api/admin/categories/1/keywords/AI")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)

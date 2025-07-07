@@ -51,7 +51,7 @@ public class AuthControllerTest {
         lenient().when(authService.toString()).thenReturn("mock");
         UserDTO userDTO = new UserDTO();
         userDTO.setEmail("test");
-        userDTO.setPassword("password");
+        userDTO.setPassword("8Password@");
         userDTO.setName("test");
         mvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
