@@ -149,7 +149,7 @@ public class CategoryPreferenceServiceImpl implements CategoryPreferenceService 
     public void deleteKeywordFromCategory(Long userId, Long categoryId, String keywordName) {
         int delete = userKeywordPreferenceRepository.deleteUserKeywordPreferenceByKeywordAndUserUserIdAndCategoryCategoryId(keywordName, userId, categoryId);
         if (delete < 1) {
-            throw new NotFoundException(KEYWORD_NOT_FOUND + userId + AND_CATEGORY_ID + categoryId);
+            throw new NotFoundException(KEYWORD_NOT_FOUND );
         }
     }
 

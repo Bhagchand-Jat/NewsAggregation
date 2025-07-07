@@ -1,8 +1,10 @@
 package com.news_aggregation_system.controller;
 
 import com.news_aggregation_system.dto.LoginRequest;
+import com.news_aggregation_system.dto.TokenRefreshRequest;
 import com.news_aggregation_system.dto.UserDTO;
 import com.news_aggregation_system.response.ApiResponse;
+import com.news_aggregation_system.response.JwtAuthResponse;
 import com.news_aggregation_system.service.auth.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -24,15 +26,19 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<ApiResponse<UserDTO>> login(@Valid @RequestBody LoginRequest request) {
 
-        return ResponseEntity.ok(ApiResponse.ok(LOGIN_SUCCESS, authService.login(request)));
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<JwtAuthResponse>> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(ApiResponse.ok(authService.login(request)));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<UserDTO>> signUp(@Valid @RequestBody UserDTO userDTO) {
+    public ResponseEntity<ApiResponse<JwtAuthResponse>> signup(@RequestBody UserDTO userDTO) {
+        return ResponseEntity.ok(ApiResponse.ok(authService.register(userDTO)));
+    }
 
-        return ResponseEntity.ok(ApiResponse.ok(SIGNUP_SUCCESS, authService.register(userDTO)));
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<JwtAuthResponse>> refresh(@RequestBody TokenRefreshRequest tokenRefreshRequest) {
+        return ResponseEntity.ok(ApiResponse.ok(authService.refresh(tokenRefreshRequest.refreshToken())));
     }
 }

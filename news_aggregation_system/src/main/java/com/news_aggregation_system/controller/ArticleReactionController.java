@@ -2,9 +2,12 @@ package com.news_aggregation_system.controller;
 
 import com.news_aggregation_system.dto.ArticleReactionDTO;
 import com.news_aggregation_system.response.ApiResponse;
+import com.news_aggregation_system.security.CustomUserDetails;
 import com.news_aggregation_system.service.user.ArticleReactionService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +17,7 @@ import static com.news_aggregation_system.service.common.Constant.*;
 
 @RestController
 @RequestMapping("/api/reactions")
+@PreAuthorize("hasRole('USER')")
 public class ArticleReactionController {
 
     private final ArticleReactionService articleReactionService;
@@ -24,14 +28,16 @@ public class ArticleReactionController {
     }
 
     @PostMapping("/like")
-    public ResponseEntity<ApiResponse<ArticleReactionDTO>> like(@Valid @RequestBody ArticleReactionDTO dto) {
+    public ResponseEntity<ApiResponse<ArticleReactionDTO>> like(@AuthenticationPrincipal CustomUserDetails user,@Valid @RequestBody ArticleReactionDTO dto) {
+        dto.setUserId(user.getUserId());
         dto.setReactionType(LIKE);
         return ResponseEntity.ok(ApiResponse.ok(ARTICLE_LIKED_SUCCESS,
                 articleReactionService.reactToArticle(dto)));
     }
 
     @PostMapping("/dislike")
-    public ResponseEntity<ApiResponse<ArticleReactionDTO>> dislike(@Valid @RequestBody ArticleReactionDTO dto) {
+    public ResponseEntity<ApiResponse<ArticleReactionDTO>> dislike(@AuthenticationPrincipal CustomUserDetails user, @Valid @RequestBody ArticleReactionDTO dto) {
+        dto.setUserId(user.getUserId());
         dto.setReactionType(DISLIKE);
         return ResponseEntity.ok(ApiResponse.ok(ARTICLE_DIS_LIKED_SUCCESS,
                 articleReactionService.reactToArticle(dto)));
