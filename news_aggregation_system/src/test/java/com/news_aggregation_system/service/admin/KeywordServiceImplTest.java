@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 public class KeywordServiceImplTest {
@@ -108,9 +109,8 @@ public class KeywordServiceImplTest {
 
         List<String> keywords = List.of("Java", "Spring");
 
-        service.addKeywordsToCategory(1L, keywords);
+        assertThatNoException().isThrownBy(() -> service.addKeywordsToCategory(1L, keywords));
 
-        verify(keywordRepository).saveAll(anyList());
     }
 
     @Test

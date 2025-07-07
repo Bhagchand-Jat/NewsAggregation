@@ -90,7 +90,7 @@ class CategoryPreferenceServiceImplTest {
         when(categoryRepository.findById(2L)).thenReturn(Optional.of(category));
         when(userKeywordPreferenceRepository.existsByUserUserIdAndCategoryCategoryIdAndKeywordIgnoreCase(anyLong(),anyLong(),anyString())).thenReturn(false);
         categoryPreferenceService.addKeywordsToCategory(1L,2L,List.of("  AI  ","AI","  "));
-        verify(userKeywordPreferenceRepository).save(any(UserKeywordPreference.class));
+        verify(userKeywordPreferenceRepository).saveAll(anyList());
     }
 
     @Test

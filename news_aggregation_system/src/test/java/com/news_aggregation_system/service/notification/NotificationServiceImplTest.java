@@ -21,20 +21,19 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceImplTest {
 
-    @Mock NotificationRepository repo;
+    @Mock NotificationRepository notificationRepository;
 
     @InjectMocks NotificationServiceImpl service;
 
     @Test
     @DisplayName("getNotificationsByUserIdAndReadStatusAndUpdateMarkAsRead → returns list")
     void getNotifications_success() {
-        Notification n = new Notification(); n.setNotificationId(2L);
-        when(repo.findByUserUserIdAndViewed(5L,false)).thenReturn(List.of(n));
-        NotificationDTO dto = new NotificationDTO(); dto.setNotificationId(1L);
-        when(NotificationMapper.toDto(n)).thenReturn(dto);
+        Notification notification = new Notification(); notification.setNotificationId(2L);
+        when(notificationRepository.findByUserUserIdAndViewed(5L,false)).thenReturn(List.of(notification));
+
         List<NotificationDTO> result = service.getNotificationsByUserIdAndReadStatusAndUpdateMarkAsRead(5L,false);
         assertThat(result).hasSize(1);
-        verify(repo).saveAll(List.of(n));
+        verify(notificationRepository).saveAll(List.of(notification));
     }
 
 
@@ -44,6 +43,6 @@ class NotificationServiceImplTest {
     void deleteOlderViewed() {
         Date limit = Date.from(Instant.now());
         service.deleteByIsViewedTrueAndReadAtBefore(limit);
-        verify(repo).deleteByViewedTrueAndReadAtBefore(limit);
+        verify(notificationRepository).deleteByViewedTrueAndReadAtBefore(limit);
     }
 }
