@@ -2,7 +2,6 @@ package com.news_aggregation_system.service.admin;
 
 import com.news_aggregation_system.dto.KeywordDTO;
 import com.news_aggregation_system.exception.NotFoundException;
-import com.news_aggregation_system.model.Category;
 import com.news_aggregation_system.model.Keyword;
 import com.news_aggregation_system.repository.CategoryRepository;
 import com.news_aggregation_system.repository.KeywordRepository;
@@ -13,10 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;

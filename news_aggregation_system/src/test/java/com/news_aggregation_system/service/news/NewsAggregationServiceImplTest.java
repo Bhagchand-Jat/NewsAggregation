@@ -3,22 +3,17 @@ package com.news_aggregation_system.service.news;
 import com.news_aggregation_system.dto.ArticleDTO;
 import com.news_aggregation_system.dto.ArticleFilterRequestDTO;
 import com.news_aggregation_system.dto.ArticleReportDTO;
-import com.news_aggregation_system.service.admin.NewsSourceService;
-import com.news_aggregation_system.service.admin.SystemConfigService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 public class NewsAggregationServiceImplTest {
 

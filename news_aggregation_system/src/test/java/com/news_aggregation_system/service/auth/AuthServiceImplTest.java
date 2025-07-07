@@ -3,15 +3,12 @@ package com.news_aggregation_system.service.auth;
 import com.news_aggregation_system.dto.LoginRequest;
 import com.news_aggregation_system.dto.UserDTO;
 import com.news_aggregation_system.response.JwtAuthResponse;
-import com.news_aggregation_system.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 public class AuthServiceImplTest {
 

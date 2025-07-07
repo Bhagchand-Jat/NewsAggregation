@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -24,7 +23,6 @@ import static org.mockito.Mockito.*;
 class SavedArticleServiceImplTest {
 
     @Mock SavedArticleRepository savedArticleRepository;
-    @Mock ArticleMapper mapper;
     @InjectMocks SavedArticleServiceImpl service;
 
     @Test
